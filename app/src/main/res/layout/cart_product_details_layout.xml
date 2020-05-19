@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+    <ImageView
+        android:id="@+id/product_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/profile_icon"
+        />
+
+    <TextView
+        android:id="@+id/product_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PRODUCT NAME"
+        android:textAllCaps="true"
+        android:textColor="@color/colorBlack"
+        android:paddingTop="15dp"
+        android:gravity="center"
+        />
+
+    </LinearLayout>
+
+    <NumberPicker
+        android:id="@+id/quantity_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="123dp"
+        android:layout_gravity="center"
+        android:solidColor="@color/colorPrimary"
+        android:layout_marginLeft = "15dp"
+        />
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product Price"
+        android:textColor="@color/colorBlack"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        />
+
+    <TextView
+        android:id="@+id/total_product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Product Price"
+        android:textColor="@color/colorBlack"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        />
+
+    <TextView
+        android:id="@+id/gst_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GST Percent"
+        android:textColor="@color/colorBlack"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        />
+
+    <TextView
+        android:id="@+id/gst_amt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GST Amt"
+        android:textColor="@color/colorBlack"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        />
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/close_icon"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        />
+</LinearLayout>
+
+    <View
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBlack"
+        />
+</LinearLayout>
+</ScrollView>

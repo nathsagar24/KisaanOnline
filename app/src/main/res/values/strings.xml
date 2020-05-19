@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">KisaanOnline</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_cart">Cart</string>
+    <string name="action_profile">Profile</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="our_products"><u>Our Products</u></string>
+    <string name="search"><u>Search</u></string>
+    <string name="filter_by_price"><u>Filter By Price</u></string>
+    <string name="login"><u>Login</u></string>
+    <string name="cart_details"><u>Cart details</u></string>
+    <string name="billing_details"><u>Billing Details</u></string>
+    <string name="payment_details"><u>Payment Details</u></string>
+    <string name="payment_apps">Pay Your Order Amount in Below Given Number via <b>PhonePE</b> / <b>Google PAY</b> / <b>PayTM</b></string>
+    <string name="payment_no"><b>PhonePE No. :-</b>> <h style= "#228B22">(+91) 9990099900</h></string>
+    <string name="company_name"><b>Name :-</b> <h style= "#228B22">Kisaan Online</h></string>
+    <string name="upload_screenshot">Upload Screenshot <h style= "#FF0000">*</h></string>
+</resources>

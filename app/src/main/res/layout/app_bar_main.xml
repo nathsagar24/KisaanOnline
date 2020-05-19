@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:logo="@mipmap/kisaanonlineicon"
+            />
+            <!--Hamburger Icon Options-->
+            <LinearLayout
+                android:id="@+id/display_options_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="15dp"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:id="@+id/home_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:text="Home"
+                    android:paddingTop="15dp"
+                    />
+                <TextView
+                    android:id="@+id/about_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:paddingTop="15dp"
+                    android:text="About Us"/>
+                <TextView
+                    android:id="@+id/contact_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:paddingTop="15dp"
+                    android:text="Contact Us"/>
+            </LinearLayout>
+            <!--Cart Contents Display-->
+            <LinearLayout
+                android:id="@+id/cart_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:visibility="gone"
+                >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cart_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="15dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorBlack"
+                   />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:id="@+id/total_cart_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cart Amount"
+                    android:textColor="@color/colorRed"
+                    />
+            </LinearLayout>
+                <Button
+                    android:id="@+id/cart_details_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="View Cart"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@drawable/rectangular_green_btn"
+                    android:layout_marginTop="15dp"
+                    />
+            </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_below="@+id/app_bar"
+        android:id="@+id/display_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

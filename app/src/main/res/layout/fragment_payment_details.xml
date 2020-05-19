@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="15dp"
+        tools:context=".Fragments.PaymentDetailsFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="15dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/payment_details"
+                android:textColor="@color/colorBlack"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/billing_details_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Billing Details"
+                android:textColor="@color/colorBlack"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:layout_marginTop="15dp"
+            android:text="@string/payment_apps"
+            />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            >
+
+            <RadioButton
+                android:id="@+id/phonepe_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PhonePE"
+                android:textColor="@color/colorBlack"
+                android:checked="true"
+
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <RadioButton
+                android:id="@+id/googlepay_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Google PAY"
+                android:textColor="@color/colorBlack"
+                android:checked="false"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <RadioButton
+                android:id="@+id/paytm_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PayTM"
+                android:textColor="@color/colorBlack"
+                android:checked="false"
+                />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:background="@color/colorLightGray"
+
+            >
+
+            <TextView
+                android:id="@+id/payment_app_name_and_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/payment_no"
+                android:layout_marginTop="15dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/company_name"
+                android:layout_marginTop="15dp"
+                />
+
+            <ImageView
+                android:id="@+id/payment_qr_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:src = "@drawable/ic_menu_camera"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="After Payment Successfully Please Upload Screenshot."
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/upload_screenshot"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/rectangular_edittext"
+                android:layout_marginTop="15dp"
+                >
+            <Button
+                android:id="@+id/screenshot_chooser_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose file"
+                android:textAllCaps="false"
+                />
+
+            <TextView
+                android:id="@+id/screenshot_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No file choosen"
+                />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/upload_screenshot_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="Proceed To Checkout"
+                android:background="@drawable/rectangular_green_btn"
+                android:padding="5dp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/colorPrimary"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

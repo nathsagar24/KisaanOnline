@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Fragments.BillingDetailsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="15dp"
+        >
+
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/billing_details"
+         android:textColor="@color/colorBlack"
+         />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:id="@+id/cart_details_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cart Details"
+            android:textColor="@color/colorBlack"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <EditText
+        android:id="@+id/phone_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:inputType="phone"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email Address"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Address"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <EditText
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="State"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <Spinner
+        android:id="@+id/state_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:entries="@array/states"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <Spinner
+        android:id="@+id/city_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:entries="@array/cities"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pin Code"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        />
+
+    <EditText
+        android:id="@+id/pincode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:inputType="number"
+        android:background="@drawable/rectangular_edittext"
+        android:focusable="true"
+        />
+
+    <Button
+        android:id="@+id/pay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Proceed To Payment"
+        android:background="@drawable/rectangular_green_btn"
+        android:layout_gravity="end"
+        android:textColor="@color/colorPrimary"
+        android:padding="5dp"
+        android:layout_marginVertical="15dp"
+        />
+</LinearLayout>
+</ScrollView>
