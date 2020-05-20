@@ -18,7 +18,7 @@ import com.example.kisaanonline.R;
 
 public class LoginFragment extends Fragment {
     private Button loginBtn,registerBtn;
-    private ImageView loginCloseBtn;
+   // private ImageView loginCloseBtn;
     private DrawerLayout drawer;
 
     @Override
@@ -27,20 +27,20 @@ public class LoginFragment extends Fragment {
         View v=inflater.inflate(R.layout.fragment_login, container, false);
 
         //Get References
-        loginCloseBtn=v.findViewById(R.id.login_close_btn);
+        //loginCloseBtn=v.findViewById(R.id.login_close_btn);
         loginBtn=v.findViewById(R.id.login_btn);
         registerBtn=v.findViewById(R.id.register_btn);
         drawer=getActivity().findViewById(R.id.drawer_layout);
 
         //Set Click Listeners
-        loginCloseBtn.setOnClickListener(
+       /* loginCloseBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         drawer.closeDrawer(GravityCompat.END);
                     }
                 }
-        );
+        );*/
 
         loginBtn.setOnClickListener(
                 new View.OnClickListener() {
@@ -54,15 +54,21 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getActivity(),"Register Button Clicked!!",Toast.LENGTH_SHORT).show();
-                FragmentTransaction fragmentTransaction=getActivity()
-                                                        .getSupportFragmentManager()
-                                                        .beginTransaction()
-                                                        .replace(R.id.nav_view,new RegisterFragment());
-                fragmentTransaction.commit();
+                setFragment(R.id.display_fragment,new RegisterFragment(),true);
             }
         });
 
         return v;
+    }
+
+    private void setFragment(int id, Fragment fragment, boolean addToBackStack) {
+        FragmentTransaction fragmentTransaction=
+                getActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(id, fragment);
+        if (addToBackStack) fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
 }

@@ -7,7 +7,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import android.view.MenuItem;
 
+import com.example.kisaanonline.Fragments.AboutFragment;
 import com.example.kisaanonline.Fragments.CartDetailsFragment;
+import com.example.kisaanonline.Fragments.ContactUsFragment;
 import com.example.kisaanonline.Fragments.HomeFragment;
 import com.example.kisaanonline.Fragments.LoginFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -27,26 +29,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        {
 
-    private DrawerLayout drawer;
+   // private DrawerLayout drawer;
     private LinearLayout cartContent,displayOptions;
     private MenuItem cartMenuItem, hamburgerMenuItem;
-    private TextView homeOption;
-    private  NavigationView navigationView;
+    private TextView homeOption,aboutOption,contactOption;
+    //private  NavigationView navigationView;
     private Button cartDetailsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.app_bar_main);
 
         //Getting the references
         cartContent=findViewById(R.id.cart_content);
         displayOptions=findViewById(R.id.display_options_layout);
         homeOption=findViewById(R.id.home_option);
-        drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        aboutOption=findViewById(R.id.about_option);
+        contactOption=findViewById(R.id.contact_option);
+
+        //drawer = findViewById(R.id.drawer_layout);
+        //navigationView = findViewById(R.id.nav_view);
         cartDetailsBtn=findViewById(R.id.cart_details_btn);
 
         //Setting OnClick Listener
@@ -64,21 +69,63 @@ public class MainActivity extends AppCompatActivity
         //Initialising
         homeOption.setTextColor(getResources().getColor(R.color.colorOrange,null));
 
+        aboutOption.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        aboutOption.setTextColor(getResources().getColor(R.color.colorOrange, null));
+                        homeOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        contactOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        displayOptions.setVisibility(View.GONE);
+                        hamburgerMenuItem.setChecked(false);
+                        setFragment(R.id.display_fragment, new AboutFragment(),false);
+                    }
+                }
+        );
+
+        contactOption.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        contactOption.setTextColor(getResources().getColor(R.color.colorOrange, null));
+                        homeOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        displayOptions.setVisibility(View.GONE);
+                        hamburgerMenuItem.setChecked(false);
+                        setFragment(R.id.display_fragment, new ContactUsFragment(),false);
+                    }
+                }
+        );
+
+        homeOption.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        homeOption.setTextColor(getResources().getColor(R.color.colorOrange, null));
+                        contactOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        displayOptions.setVisibility(View.GONE);
+                        hamburgerMenuItem.setChecked(false);
+                        setFragment(R.id.display_fragment, new HomeFragment(),false);
+                    }
+                }
+        );
+
         //Initialising Action Bar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
        //Setting Up Navigation Drawer
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        /*ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
+        toggle.syncState();*/
+       // navigationView.setNavigationItemSelectedListener(this);
 
-        setFragment(R.id.nav_view,new LoginFragment(),false);
+        setFragment(R.id.display_fragment,new LoginFragment(),true);
 
-        setFragment(R.id.display_fragment,new HomeFragment(),true);
+        setFragment(R.id.display_fragment,new HomeFragment(),false);
     }
 
     private void setFragment(int id, Fragment fragment, boolean addToBackStack) {
@@ -91,12 +138,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        /*DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
-        }
+        }*/
+        super.onBackPressed();
+        Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.display_fragment);
+        if(fragment instanceof  HomeFragment || fragment instanceof AboutFragment || fragment instanceof ContactUsFragment);//finish();
     }
 
     @Override
@@ -104,7 +154,6 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         cartMenuItem=menu.findItem(R.id.action_cart);
-
         hamburgerMenuItem=menu.findItem(R.id.action_hamburger);
         return true;
     }
@@ -126,15 +175,16 @@ public class MainActivity extends AppCompatActivity
                     cartMenuItem.setChecked(true);
                 }
             } else {
-                Toast.makeText(this,"You Are Not Logged In",Toast.LENGTH_SHORT).show();
-                drawer.openDrawer(GravityCompat.END);
+                setFragment(R.id.display_fragment,new LoginFragment(),true);
+                /*Toast.makeText(this,"You Are Not Logged In",Toast.LENGTH_SHORT).show();
+                drawer.openDrawer(GravityCompat.END);*/
                 displayOptions.setVisibility(View.GONE);
                 hamburgerMenuItem.setChecked(false);
             }
 
         }
         else if (id == R.id.action_profile){
-            drawer.openDrawer(GravityCompat.END);
+            setFragment(R.id.display_fragment,new LoginFragment(),true);
         }
         else if(id == R.id.action_hamburger){
             Toast.makeText(this,"Hamburger Action Button Clicked!!",Toast.LENGTH_SHORT).show();
@@ -158,9 +208,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
+
+    /*@Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
         return true;
-    }
+    }*/
 }

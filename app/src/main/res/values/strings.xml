@@ -24,7 +24,15 @@
     <string name="billing_details"><u>Billing Details</u></string>
     <string name="payment_details"><u>Payment Details</u></string>
     <string name="payment_apps">Pay Your Order Amount in Below Given Number via <b>PhonePE</b> / <b>Google PAY</b> / <b>PayTM</b></string>
-    <string name="payment_no"><b>PhonePE No. :-</b>> <h style= "#228B22">(+91) 9990099900</h></string>
-    <string name="company_name"><b>Name :-</b> <h style= "#228B22">Kisaan Online</h></string>
-    <string name="upload_screenshot">Upload Screenshot <h style= "#FF0000">*</h></string>
+    <string name="payment_no"><b>PhonePE No. :-</b>> <h style="#228B22">(+91) 9990099900</h></string>
+    <string name="company_name"><b>Name :-</b> <h style="#228B22">Kisaan Online</h></string>
+    <string name="upload_screenshot">Upload Screenshot <h style="#FF0000">*</h></string>
+    <string name="about_us"><![CDATA[<u><b>About Us</b></u> \n \n Kisaanonline Agrivision (India) Limited is a company based at Ahmedabad, Gujarat, driven by a group of like-minded friends, all are highly qualified (engineers, computer experts, commerce graduates etc.) having varied experience of 12 to 20 years in business segments like Food processing, Plastic product manufacturing, Computer programming, Accounting, Purchasing of various goods & services, Marketing etc. One common factor in all the friends, who are driving this company, is of having agriculture background and direct association with agriculture sector. Due to rapid change in economy, living standard, social life & technology advancement since last two decades in India, present day demands to organise the agriculture sector for betterment of farmers by increasing the productivity & quality of the foods being produced with due consideration of their health & safety. We offer value added quality products being used by farmers on day to day basis at most competitive price through our online portal along with knowledge on information and use of such products through our highly trained facilitators. We also organise seminars & full time courses through highly qualified experienced experts in various agriculture segments i.e. Soil, Organic farming, Optimum use of fertilisers & pesticides, Farming technology such as drip irrigation, mulching technology, greenhouse etc., Use of correct farming equipment & tools, Health, Safety & Environment in farming etc. to enhance knowledge of farmers and application of the same in their day to day life. <u><b>Our Vision</b></u> \n \n To see organised agriculture sector in India at par with the best in technology, food quality, productivity, water & energy conservation, Health, Safety and Environment.]]></string>
+    <string name="google_maps_api_key" translatable="false">AIzaSyAkI9UeaRsuZPZ1LDPnEy5-TqlFTBIWbws</string>
+    <string name="location_description"><![CDATA[<h style = #228B22> KISAAN ONLINE AGRIVISION (INDIA) LIMITED.</h>   <h style = #000000>405, Brooklyn Tower, Near YMCA Club, SG Highway, Makarba, Ahmedabad, Gujarat, India - 380015 </h>]]></string>
+    <string name="contact_us"><u>Contact Us</u></string>
+    <string name="address">405, Brooklynn Tower, Near YMCA Club, SG Highway, Makarba, Ahmedabad, Gujarat, India - 380015</string>
+    <string name="phone_no">+91 76220 17002</string>
+    <string name="email">info@kisaanonline.net</string>
+    <string name="website">https://www.kisaanonline.net/</string>
 </resources>

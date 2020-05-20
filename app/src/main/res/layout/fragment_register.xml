@@ -12,16 +12,16 @@
     android:orientation="vertical"
     tools:context=".Fragments.RegisterFragment">
 
-    <ImageView
+    <!--<ImageView
         android:paddingTop="15dp"
         android:id="@+id/register_close_btn"
         android:layout_width="@dimen/close_icon_dimension"
         android:layout_height="@dimen/close_icon_dimension"
         android:src="@mipmap/close_icon"
         android:layout_gravity="end"
-        />
+        />-->
 
-    <ImageView
+    <!--<ImageView
         android:paddingTop="15dp"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
         android:text="Name :-"
         android:textColor="@color/colorBlack"
         android:textStyle="bold"
-        />
+        />-->
 
     <TextView
         android:paddingTop="15dp"
