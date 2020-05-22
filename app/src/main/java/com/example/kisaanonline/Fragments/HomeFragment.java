@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.example.kisaanonline.R;
 import com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar;
 
 public class HomeFragment extends Fragment {
-    private RangeSeekBar priceSeekBar;
+    private CrystalRangeSeekbar priceSeekBar;
     private TextView priceRange;
 
 
@@ -28,7 +30,7 @@ public class HomeFragment extends Fragment {
 
         //Get References
         priceRange=v.findViewById(R.id.price_range);
-        priceSeekBar=v.findViewById(R.id.price_seek_bar);
+        priceSeekBar=v.findViewById(R.id.price_seekbar);
 
         initialisePriceSeekBar(100,4000);
 
@@ -37,15 +39,15 @@ public class HomeFragment extends Fragment {
 
     private void initialisePriceSeekBar(int minValue, int maxValue) {
 
-        priceSeekBar.setRangeValues(100,4000);
-        priceSeekBar.setOnRangeSeekBarChangeListener(
-                new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+        priceSeekBar.setOnRangeSeekbarChangeListener(
+                new OnRangeSeekbarChangeListener() {
                     @Override
-                    public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    public void valueChanged(Number minValue, Number maxValue) {
                         priceRange.setText("Filter: Rs. " + minValue + "- Rs. " + maxValue);
                     }
                 }
         );
+
     }
 
 }

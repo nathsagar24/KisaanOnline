@@ -43,13 +43,20 @@
         android:paddingTop="15dp"
         android:textColor="@color/colorBlack"
         />
-    <com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar
-        android:id="@+id/price_seek_bar"
+    <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
+        android:id="@+id/price_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="15dp"
-
-        />
+        app:min_value="100"
+        app:max_value="4000"
+        app:steps="1"
+        app:bar_color="@color/colorOrange"
+        app:bar_highlight_color="@color/colorOrange"
+        app:left_thumb_image="@mipmap/thumb"
+        app:right_thumb_image="@mipmap/thumb"
+        app:left_thumb_image_pressed="@mipmap/thumb"
+        app:right_thumb_image_pressed="@mipmap/thumb"
+        app:data_type="_integer"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

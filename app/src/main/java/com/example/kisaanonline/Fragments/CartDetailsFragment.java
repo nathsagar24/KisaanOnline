@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 
 import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
 
 public class CartDetailsFragment extends Fragment {
 
@@ -29,12 +30,7 @@ public class CartDetailsFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FragmentTransaction fragmentTransaction=getActivity()
-                                                                .getSupportFragmentManager()
-                                                                .beginTransaction()
-                                                                .replace(R.id.display_fragment,new BillingDetailsFragment())
-                                                                .addToBackStack(null);
-                        fragmentTransaction.commit();
+                        Utils.setFragment(getActivity(),new BillingDetailsFragment(),true);
                     }
                 }
         );

@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
+
 public class BillingDetailsFragment extends Fragment {
 
     private TextView cartDetailsBtn;
@@ -29,12 +31,7 @@ public class BillingDetailsFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FragmentTransaction fragmentTransaction=getActivity()
-                                                                .getSupportFragmentManager()
-                                                                .beginTransaction()
-                                                                .replace(R.id.display_fragment,new CartDetailsFragment())
-                                                                .addToBackStack(null);
-                         fragmentTransaction.commit();
+                        Utils.setFragment(getActivity(),new CartDetailsFragment(),true);
                     }
                 }
         );
@@ -44,12 +41,7 @@ public class BillingDetailsFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FragmentTransaction fragmentTransaction=getActivity()
-                                .getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.display_fragment,new PaymentDetails())
-                                .addToBackStack(null);
-                        fragmentTransaction.commit();
+                        Utils.setFragment(getActivity(),new PaymentDetails(),true);
                     }
                 }
         );

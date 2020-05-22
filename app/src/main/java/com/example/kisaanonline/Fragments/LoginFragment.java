@@ -14,61 +14,71 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.kisaanonline.APIToken;
+import com.example.kisaanonline.AuthenticationCredentials;
+import com.example.kisaanonline.KisaanOnlineAPI;
 import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginFragment extends Fragment {
-    private Button loginBtn,registerBtn;
-   // private ImageView loginCloseBtn;
+    private Button loginBtn, registerBtn;
+    // private ImageView loginCloseBtn;
     private DrawerLayout drawer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v=inflater.inflate(R.layout.fragment_login, container, false);
+        View v = inflater.inflate(R.layout.fragment_login, container, false);
 
         //Get References
         //loginCloseBtn=v.findViewById(R.id.login_close_btn);
-        loginBtn=v.findViewById(R.id.login_btn);
-        registerBtn=v.findViewById(R.id.register_btn);
-        drawer=getActivity().findViewById(R.id.drawer_layout);
-
-        //Set Click Listeners
-       /* loginCloseBtn.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawer.closeDrawer(GravityCompat.END);
-                    }
-                }
-        );*/
+        loginBtn = v.findViewById(R.id.login_btn);
+        registerBtn = v.findViewById(R.id.register_btn);
+        drawer = getActivity().findViewById(R.id.drawer_layout);
 
         loginBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(),"Login Button Clicked!!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Login Button Clicked!!", Toast.LENGTH_SHORT).show();
+                        authenticate();
                     }
                 }
         );
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(),"Register Button Clicked!!",Toast.LENGTH_SHORT).show();
-                setFragment(R.id.display_fragment,new RegisterFragment(),true);
+                Toast.makeText(getActivity(), "Register Button Clicked!!", Toast.LENGTH_SHORT).show();
+                Utils.setFragment(getActivity(), new RegisterFragment(), true);
             }
         });
 
         return v;
     }
 
-    private void setFragment(int id, Fragment fragment, boolean addToBackStack) {
-        FragmentTransaction fragmentTransaction=
-                getActivity()
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(id, fragment);
-        if (addToBackStack) fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+    private void authenticate() {
+
+        final KisaanOnlineAPI api = Utils.getAPIInstance();
+        Call<APIToken> call = api.getToken(new AuthenticationCredentials("efive","efive123"));
+
+        call.enqueue(new Callback<APIToken>() {
+            @Override
+            public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                String apiToken = response.body().getToken();
+                Toast.makeText(getActivity(),"API Token : " + apiToken, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<APIToken> call, Throwable t) {
+                Toast.makeText(getActivity(), "Call to KisaanOnline API Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity
         {
 
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(View view) {
                         cartContent.setVisibility(View.GONE);
                         cartMenuItem.setChecked(false);
-                        setFragment(R.id.display_fragment, new CartDetailsFragment(),true);
+                        Utils.setFragment(MainActivity.this, new CartDetailsFragment(),true);
                     }
                 }
         );
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity
                         contactOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         displayOptions.setVisibility(View.GONE);
                         hamburgerMenuItem.setChecked(false);
-                        setFragment(R.id.display_fragment, new AboutFragment(),false);
+                        Utils.setFragment(MainActivity.this, new AboutFragment(),true);
                     }
                 }
         );
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity
                         aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         displayOptions.setVisibility(View.GONE);
                         hamburgerMenuItem.setChecked(false);
-                        setFragment(R.id.display_fragment, new ContactUsFragment(),false);
+                        Utils.setFragment(MainActivity.this, new ContactUsFragment(),true);
                     }
                 }
         );
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity
                         aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         displayOptions.setVisibility(View.GONE);
                         hamburgerMenuItem.setChecked(false);
-                        setFragment(R.id.display_fragment, new HomeFragment(),false);
+                        Utils.setFragment(MainActivity.this, new HomeFragment(),false);
                     }
                 }
         );
@@ -115,38 +117,20 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Utils.setFragment(MainActivity.this,new LoginFragment(),true);
 
-       //Setting Up Navigation Drawer
-        /*ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();*/
-       // navigationView.setNavigationItemSelectedListener(this);
-
-        setFragment(R.id.display_fragment,new LoginFragment(),true);
-
-        setFragment(R.id.display_fragment,new HomeFragment(),false);
-    }
-
-    private void setFragment(int id, Fragment fragment, boolean addToBackStack) {
-        FragmentTransaction fragmentTransaction=getSupportFragmentManager()
-                                                .beginTransaction()
-                                                .replace(id, fragment);
-        if (addToBackStack) fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        Utils.setFragment(MainActivity.this,new HomeFragment(),false);
     }
 
     @Override
     public void onBackPressed() {
-        /*DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.END)) {
-            drawer.closeDrawer(GravityCompat.END);
-        } else {
-            super.onBackPressed();
-        }*/
-        super.onBackPressed();
+        displayOptions.setVisibility(View.GONE);
+        hamburgerMenuItem.setChecked(false);
+        cartContent.setVisibility(View.GONE);
+        cartMenuItem.setChecked(false);
         Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.display_fragment);
-        if(fragment instanceof  HomeFragment || fragment instanceof AboutFragment || fragment instanceof ContactUsFragment);//finish();
+        if(fragment instanceof  HomeFragment)finish();
+        super.onBackPressed();
     }
 
     @Override
@@ -175,7 +159,7 @@ public class MainActivity extends AppCompatActivity
                     cartMenuItem.setChecked(true);
                 }
             } else {
-                setFragment(R.id.display_fragment,new LoginFragment(),true);
+                Utils.setFragment(MainActivity.this,new LoginFragment(),true);
                 /*Toast.makeText(this,"You Are Not Logged In",Toast.LENGTH_SHORT).show();
                 drawer.openDrawer(GravityCompat.END);*/
                 displayOptions.setVisibility(View.GONE);
@@ -184,7 +168,7 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.action_profile){
-            setFragment(R.id.display_fragment,new LoginFragment(),true);
+            Utils.setFragment(MainActivity.this,new LoginFragment(),true);
         }
         else if(id == R.id.action_hamburger){
             Toast.makeText(this,"Hamburger Action Button Clicked!!",Toast.LENGTH_SHORT).show();
@@ -207,11 +191,4 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
-
-    /*@Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-
-        return true;
-    }*/
 }

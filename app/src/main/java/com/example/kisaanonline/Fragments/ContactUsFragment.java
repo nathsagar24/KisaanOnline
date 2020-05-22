@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kisaanonline.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,9 +36,10 @@ public class ContactUsFragment extends Fragment {
         locationMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                googleMap.addMarker(new MarkerOptions().position(new LatLng(23.0040284,72.500764)).title(getString(R.string.location_description)));
-                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
+                LatLng latLng = new LatLng(23.0040284,72.500764);
+                float zoomLevel = 16.0f;
+                googleMap.addMarker(new MarkerOptions().position(latLng));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
             }
         });
         return v;

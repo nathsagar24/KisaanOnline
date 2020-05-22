@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -43,12 +44,7 @@ public class PaymentDetails extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FragmentTransaction fragmentTransaction=getActivity()
-                                                                .getSupportFragmentManager()
-                                                                .beginTransaction()
-                                                                .replace(R.id.display_fragment,new BillingDetailsFragment())
-                                                                .addToBackStack(null);
-                        fragmentTransaction.commit();
+                        Utils.setFragment(getActivity(),new BillingDetailsFragment(),true);
                     }
                 }
         );
@@ -71,12 +67,8 @@ public class PaymentDetails extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-                        FragmentTransaction fragmentTransaction = getActivity()
-                                                                    .getSupportFragmentManager()
-                                                                    .beginTransaction()
-                                                                    .replace(R.id.display_fragment, new HomeFragment());
-                        fragmentTransaction.commit();
+                        getActivity().getSupportFragmentManager().popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        Utils.setFragment(getActivity(), new HomeFragment(), false);
                     }
                 }
         );

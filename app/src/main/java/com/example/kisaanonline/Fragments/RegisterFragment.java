@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.kisaanonline.Fragments.LoginFragment;
 import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
 
 
 public class RegisterFragment extends Fragment {
@@ -36,22 +37,12 @@ public class RegisterFragment extends Fragment {
         loginBtn=v.findViewById(R.id.login_btn);
         registerBtn=v.findViewById(R.id.register_btn);
 
-        //Set Click Listeners
-        /*registerCloseBtn.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawer.closeDrawer(GravityCompat.END);
-                    }
-                }
-        );*/
-
         loginBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(getActivity(),"Login Button Clicked",Toast.LENGTH_SHORT).show();
-                        setFragment(R.id.display_fragment,new LoginFragment(),true);
+                        Utils.setFragment(getActivity(),new LoginFragment(),true);
                     }
                 }
         );
@@ -66,16 +57,6 @@ public class RegisterFragment extends Fragment {
         );
 
         return v;
-    }
-
-    private void setFragment(int id, Fragment fragment, boolean addToBackStack) {
-        FragmentTransaction fragmentTransaction=
-                getActivity()
-                        .getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(id, fragment);
-        if (addToBackStack) fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
     }
 
 }
