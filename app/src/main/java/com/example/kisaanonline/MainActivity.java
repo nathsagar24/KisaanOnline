@@ -1,5 +1,6 @@
 package com.example.kisaanonline;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.core.view.GravityCompat;
@@ -30,6 +31,16 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
+//Some error in backend Not giving getIsError == "Y" even after giving correct credentials
+//A post request that returns product_name, image, price, quantity based on username  ( already sent without quantity)
+//A get request that returns all product names along with image
+//When Add To Cart is clicked in home page add product to cart with quantity 1 if already added ignore
+//In cart details page when quantity is changed change quantity in cart of username with OnChangeListener
+//In cart details page when close image is clicked the product for that username should be deleted
+
+
+
+
 public class MainActivity extends AppCompatActivity
         {
 
@@ -39,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private TextView homeOption,aboutOption,contactOption;
     //private  NavigationView navigationView;
     private Button cartDetailsBtn;
+    private String usernameOrEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +63,6 @@ public class MainActivity extends AppCompatActivity
         homeOption=findViewById(R.id.home_option);
         aboutOption=findViewById(R.id.about_option);
         contactOption=findViewById(R.id.contact_option);
-
-        //drawer = findViewById(R.id.drawer_layout);
-        //navigationView = findViewById(R.id.nav_view);
         cartDetailsBtn=findViewById(R.id.cart_details_btn);
 
         //Setting OnClick Listener
@@ -108,7 +117,7 @@ public class MainActivity extends AppCompatActivity
                         aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         displayOptions.setVisibility(View.GONE);
                         hamburgerMenuItem.setChecked(false);
-                        Utils.setFragment(MainActivity.this, new HomeFragment(),false);
+                        Utils.setFragment(MainActivity.this, new HomeFragment(),true);
                     }
                 }
         );
@@ -117,9 +126,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Utils.setFragment(MainActivity.this,new LoginFragment(),true);
-
-        Utils.setFragment(MainActivity.this,new HomeFragment(),false);
+        //Utils.setFragment(MainActivity.this,new LoginFragment(),false);
+        Utils.setFragment(MainActivity.this,new HomeFragment(),true);
     }
 
     @Override
@@ -159,7 +167,7 @@ public class MainActivity extends AppCompatActivity
                     cartMenuItem.setChecked(true);
                 }
             } else {
-                Utils.setFragment(MainActivity.this,new LoginFragment(),true);
+                Utils.setFragment(MainActivity.this,new LoginFragment(),false);
                 /*Toast.makeText(this,"You Are Not Logged In",Toast.LENGTH_SHORT).show();
                 drawer.openDrawer(GravityCompat.END);*/
                 displayOptions.setVisibility(View.GONE);
@@ -168,7 +176,7 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.action_profile){
-            Utils.setFragment(MainActivity.this,new LoginFragment(),true);
+            Utils.setFragment(MainActivity.this,new LoginFragment(),false);
         }
         else if(id == R.id.action_hamburger){
             Toast.makeText(this,"Hamburger Action Button Clicked!!",Toast.LENGTH_SHORT).show();
@@ -188,7 +196,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean loggedIn() {
-        return true;
+        SharedPreferences sharedPref=getSharedPreferences("UserCredentials",MODE_PRIVATE);
+        usernameOrEmail = sharedPref.getString("Username/Email",null);
+        if(usernameOrEmail!=null)return true;
+        else return false;
     }
 
 }
