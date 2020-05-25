@@ -45,7 +45,12 @@ public class HomeFragment extends Fragment {
 
         //Setting Up Product List
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
-        productListLayoutManager = new LinearLayoutManager(getActivity());
+        productListLayoutManager = new LinearLayoutManager(getActivity()){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
         productListRecyclerView.setLayoutManager(productListLayoutManager);
         getProductList();
 

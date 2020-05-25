@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ProductDetailsList {
     @SerializedName("data")
-    List<ProductDetails> data;
+    private List<ProductDetails> data;
 
     public ProductDetailsList(List<ProductDetails> data) {
         this.data = data;
@@ -23,19 +23,19 @@ public class ProductDetailsList {
     public class ProductDetails{
 
         @SerializedName("product_name")
-        String productName;
+        private String productName;
 
         @SerializedName("price")
-        String price;
+        private String price;
 
         @SerializedName("image")
-        String imageUrl;
+        private String imageUrl;
 
         @SerializedName("productid")
-        String productId;
+        private String productId;
 
         @SerializedName("variantid")
-        String variantId;
+        private String variantId;
 
         public ProductDetails(String productName, String price, String imageUrl, String productId, String variantId) {
             this.productName = productName;
