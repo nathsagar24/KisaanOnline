@@ -30,4 +30,10 @@ public interface KisaanOnlineAPI{
             @Header("Authorization") String token
     );
 
+    @POST("services/get_product_list")
+    Call<ProductDetailsList> getProductDetails(
+            @Body Authorizer authorizer,
+            @Header("Authorization") String token
+    );
+
 }

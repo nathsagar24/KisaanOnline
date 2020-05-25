@@ -25,6 +25,7 @@
         android:layout_marginTop="15dp"
         android:textColor="@color/colorBlack"
         android:textSize="15dp"
+
         />
     <SearchView
         android:id="@+id/search_bar"
@@ -90,5 +91,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
+        android:layout_gravity="center_horizontal"
         />
 </LinearLayout>
