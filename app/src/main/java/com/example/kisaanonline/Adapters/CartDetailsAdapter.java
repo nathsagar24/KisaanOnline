@@ -1,4 +1,4 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.Adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,23 +13,27 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.ApiResults.CartDetailsResult;
+import com.example.kisaanonline.ApiResults.CartSaveResult;
+import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.example.kisaanonline.Models.ProductCredentialsList;
+import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.CartDetailsViewHolder> {
-    private List<CartDetails.Data> data;
+    private List<CartDetailsResult.Data> data;
     private FragmentActivity context;
 
-    public CartDetailsAdapter(FragmentActivity context, List<CartDetails.Data> data) {
+    public CartDetailsAdapter(FragmentActivity context, List<CartDetailsResult.Data> data) {
         this.context = context;
         this.data = data;
     }
@@ -94,24 +98,24 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
     }
 
     private void saveProductToCart(String productId, String variantId, int qty){
-        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
+        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
         callToken.enqueue(
-                new Callback<APIToken>() {
+                new Callback<APITokenResult>() {
                     @Override
-                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
 
                         List<ProductCredentialsList.ProductCredentials> productCredentialsList = new ArrayList<>();
                         productCredentialsList.add(new ProductCredentialsList.ProductCredentials(productId, variantId, qty));
-                        Call<CartProductSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
+                        Call<CartSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
                                                         productCredentialsList,
                                                         "Bearer " + token,
                                                         Utils.userId
                                                         );
                         callCartProductSave.enqueue(
-                                new Callback<CartProductSaveResult>() {
+                                new Callback<CartSaveResult>() {
                                     @Override
-                                    public void onResponse(Call<CartProductSaveResult> call, Response<CartProductSaveResult> response) {
+                                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
                                         if(response.code() == 200) {
                                             if (response.body().getIsError().equals("N")) {
                                                 Toast.makeText(context, "Quantity Updated!!", Toast.LENGTH_SHORT).show();
@@ -125,7 +129,7 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                                     }
 
                                     @Override
-                                    public void onFailure(Call<CartProductSaveResult> call, Throwable t) {
+                                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
                                         Toast.makeText(context, "API Call For Saving Cart Item Failed : " + t.getMessage(),Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -133,7 +137,7 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                     }
 
                     @Override
-                    public void onFailure(Call<APIToken> call, Throwable t) {
+                    public void onFailure(Call<APITokenResult> call, Throwable t) {
                         Toast.makeText(context, "API Call for getting token failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }

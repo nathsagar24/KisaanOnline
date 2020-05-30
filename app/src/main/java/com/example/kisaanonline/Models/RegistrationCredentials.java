@@ -1,4 +1,4 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.Models;
 
 public class RegistrationCredentials {
     private String username,email,loginpassword,contact,address,state,city,pincode;

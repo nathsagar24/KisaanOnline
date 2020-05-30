@@ -1,33 +1,27 @@
 package com.example.kisaanonline.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.kisaanonline.APIToken;
-import com.example.kisaanonline.AuthenticationCredentials;
-import com.example.kisaanonline.CartDetails;
-import com.example.kisaanonline.CartDetailsAdapter;
+import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.example.kisaanonline.ApiResults.CartDetailsResult;
+import com.example.kisaanonline.Adapters.CartDetailsAdapter;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
 
 import java.util.List;
 
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,17 +47,17 @@ public class CartDetailsFragment extends Fragment {
         cartDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         //Populating the data
-        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
+        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
         callToken.enqueue(
-                new Callback<APIToken>() {
+                new Callback<APITokenResult>() {
                     @Override
-                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
-                        Call<CartDetails> callCartDetails = Utils.getAPIInstance().getCartDetails("Bearer " + token, Utils.userId);
+                        Call<CartDetailsResult> callCartDetails = Utils.getAPIInstance().getCartDetails("Bearer " + token, Utils.userId);
                         callCartDetails.enqueue(
-                                new Callback<CartDetails>() {
+                                new Callback<CartDetailsResult>() {
                                     @Override
-                                    public void onResponse(Call<CartDetails> call, Response<CartDetails> response) {
+                                    public void onResponse(Call<CartDetailsResult> call, Response<CartDetailsResult> response) {
                                         if(response.code() == 200) {
                                             Toast.makeText(getActivity(), "Successfully Fetched Cart Details Data", Toast.LENGTH_SHORT).show();
                                             setCartDetailsAdapter(response.body().getDataList());
@@ -77,7 +71,7 @@ public class CartDetailsFragment extends Fragment {
                                     }
 
                                     @Override
-                                    public void onFailure(Call<CartDetails> call, Throwable t) {
+                                    public void onFailure(Call<CartDetailsResult> call, Throwable t) {
                                         Toast.makeText(getActivity(), "Call to API for Cart Details Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -85,7 +79,7 @@ public class CartDetailsFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<APIToken> call, Throwable t) {
+                    public void onFailure(Call<APITokenResult> call, Throwable t) {
                         Toast.makeText(getActivity(), "Call to API for token failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -104,7 +98,7 @@ public class CartDetailsFragment extends Fragment {
         return v;
     }
 
-    private void setCartDetailsAdapter(List<CartDetails.Data> data){
+    private void setCartDetailsAdapter(List<CartDetailsResult.Data> data){
         cartDetailsRecyclerView.setAdapter(new CartDetailsAdapter(getActivity(), data));
     }
 

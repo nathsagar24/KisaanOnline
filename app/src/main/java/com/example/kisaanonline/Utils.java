@@ -7,6 +7,8 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -21,8 +23,7 @@ public class Utils {
     private static final String BASE_URL = "http://103.106.20.186:9009/shoppingcart_api/";
     public static boolean loggedIn;
     public static String userId;
-
-
+    public static MutableLiveData<Integer> CART_LIST_VISIBILITY , DISPLAY_OPTIONS_VISIBILITY, HOME_OPTION_COLOR, ABOUT_OPTION_COLOR,CONTACT_OPTION_COLOR;
 
     public static void setFragment(FragmentActivity parentActivity, Fragment newFragment, boolean addToBackStack){
 

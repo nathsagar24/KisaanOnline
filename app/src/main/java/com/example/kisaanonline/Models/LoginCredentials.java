@@ -1,4 +1,4 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.Models;
 
 public class LoginCredentials {
     private String loginusername;

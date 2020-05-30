@@ -53,7 +53,7 @@
             </LinearLayout>
             <!--Cart Contents Display-->
             <LinearLayout
-                android:id="@+id/cart_content"
+                android:id="@+id/cart_list_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

@@ -1,4 +1,4 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,17 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.kisaanonline.ApiResults.CartListResult;
+import com.example.kisaanonline.R;
 import com.squareup.picasso.Picasso;
 
-public class CartProductListAdapter extends RecyclerView.Adapter<CartProductListAdapter.CartProductViewHolder> {
+public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartProductViewHolder> {
 
-    private CartProducts cartProducts;
+    private CartListResult cartListResult;
     private FragmentActivity context;
 
-    public CartProductListAdapter(FragmentActivity context, CartProducts cartProducts){
+    public CartListAdapter(FragmentActivity context, CartListResult cartListResult){
 
         this.context = context;
-        this.cartProducts = cartProducts;
+        this.cartListResult = cartListResult;
 
     }
 
@@ -45,13 +47,13 @@ public class CartProductListAdapter extends RecyclerView.Adapter<CartProductList
 
     @Override
     public void onBindViewHolder(@NonNull CartProductViewHolder holder, int position) {
-        holder.cartProductNameAndQty.setText("" + cartProducts.getCartProductsList().get(position).getProductName() + " X " + cartProducts.getCartProductsList().get(position).getQuantity());
-        holder.cartProductPrice.setText("Rs: " + cartProducts.getCartProductsList().get(position).getProductPrice());
-        if(cartProducts.getCartProductsList().get(position).getImageUrl()!=null) {
+        holder.cartProductNameAndQty.setText("" + cartListResult.getCartProductsList().get(position).getProductName() + " X " + cartListResult.getCartProductsList().get(position).getQuantity());
+        holder.cartProductPrice.setText("Rs: " + cartListResult.getCartProductsList().get(position).getProductPrice());
+        if(cartListResult.getCartProductsList().get(position).getImageUrl()!=null) {
             Picasso
                     .with(context)
                     .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            cartProducts.getCartProductsList().get(position).getImageUrl().substring(cartProducts.getCartProductsList().get(position).getImageUrl().lastIndexOf("\\") + 1))
+                            cartListResult.getCartProductsList().get(position).getImageUrl().substring(cartListResult.getCartProductsList().get(position).getImageUrl().lastIndexOf("\\") + 1))
                     .placeholder(R.drawable.ic_menu_camera)
                     .into(holder.icon);
         }
@@ -59,7 +61,7 @@ public class CartProductListAdapter extends RecyclerView.Adapter<CartProductList
 
     @Override
     public int getItemCount() {
-        return cartProducts.getCartProductsList().size();
+        return cartListResult.getCartProductsList().size();
     }
 
 }

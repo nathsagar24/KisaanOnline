@@ -1,12 +1,12 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.ApiResults;
 
 import com.google.gson.annotations.SerializedName;
 
-public class APIToken {
+public class APITokenResult {
     @SerializedName("token")
     private String token;
 
-    public APIToken(String token) {
+    public APITokenResult(String token) {
         this.token = token;
     }
 

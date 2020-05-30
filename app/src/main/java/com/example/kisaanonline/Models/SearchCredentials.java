@@ -1,4 +1,4 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.Models;
 
 public class SearchCredentials {
     private String search_keyword;

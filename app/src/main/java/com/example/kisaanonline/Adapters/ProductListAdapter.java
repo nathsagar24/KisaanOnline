@@ -1,10 +1,5 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.Adapters;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +9,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.kisaanonline.Fragments.BillingDetailsFragment;
+import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.ApiResults.CartSaveResult;
+import com.example.kisaanonline.ApiResults.ProductListResult;
 import com.example.kisaanonline.Fragments.CartDetailsFragment;
 import com.example.kisaanonline.Fragments.LoginFragment;
+import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.example.kisaanonline.Models.ProductCredentialsList;
+import com.example.kisaanonline.R;
+import com.example.kisaanonline.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,10 +31,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ProductViewHolder> {
-    private List<ProductDetailsList.ProductDetails> productDetailsList;
+    private List<ProductListResult.ProductDetails> productDetailsList;
     private FragmentActivity context;
 
-    public ProductListAdapter(FragmentActivity context, List<ProductDetailsList.ProductDetails> productDetailsList) {
+    public ProductListAdapter(FragmentActivity context, List<ProductListResult.ProductDetails> productDetailsList) {
         this.context = context;
         this.productDetailsList = productDetailsList;
     }
@@ -90,24 +90,24 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     }
 
     private void addNewProductToCart(String productId, String variantId,int qty) {
-        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
+        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
-                new Callback<APIToken>() {
+                new Callback<APITokenResult>() {
                     @Override
-                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         String token = response.body().getToken();
                         List<ProductCredentialsList.ProductCredentials> productCredentialsList =new ArrayList<>();
                         productCredentialsList.add(new ProductCredentialsList.ProductCredentials(productId, variantId, qty));
-                        Call<CartProductSaveResult> callCartProductSaveResult = Utils.getAPIInstance().saveCartProduct(
+                        Call<CartSaveResult> callCartProductSaveResult = Utils.getAPIInstance().saveCartProduct(
                                                                                 productCredentialsList,
                                                                                 "Bearer " + token,
                                                                                 Utils.userId
                                                                                 );
                         Log.v("User Id", Utils.userId);
                         callCartProductSaveResult.enqueue(
-                                new Callback<CartProductSaveResult>() {
+                                new Callback<CartSaveResult>() {
                                     @Override
-                                    public void onResponse(Call<CartProductSaveResult> call, Response<CartProductSaveResult> response) {
+                                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
                                         Log.v("RESPONSE : ","" + response.errorBody());
                                         if(response.body().getIsError().equals("N")){
                                             Toast.makeText(context, "Product Added To Cart", Toast.LENGTH_SHORT).show();
@@ -119,7 +119,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                                     }
 
                                     @Override
-                                    public void onFailure(Call<CartProductSaveResult> call, Throwable t) {
+                                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
                                             Toast.makeText(context,"Add To Cart API Call Failed : " + t.getMessage(), Toast.LENGTH_SHORT);
                                     }
                                 }
@@ -127,7 +127,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     }
 
                     @Override
-                    public void onFailure(Call<APIToken> call, Throwable t) {
+                    public void onFailure(Call<APITokenResult> call, Throwable t) {
 
                     }
                 }

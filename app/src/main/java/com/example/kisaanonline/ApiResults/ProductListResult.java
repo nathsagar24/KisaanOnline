@@ -1,14 +1,14 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.ApiResults;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ProductDetailsList {
+public class ProductListResult {
     @SerializedName("data")
     private List<ProductDetails> data;
 
-    public ProductDetailsList(List<ProductDetails> data) {
+    public ProductListResult(List<ProductDetails> data) {
         this.data = data;
     }
 

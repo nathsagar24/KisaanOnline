@@ -1,7 +1,5 @@
 package com.example.kisaanonline.Fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -17,12 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.kisaanonline.APIToken;
-import com.example.kisaanonline.AuthenticationCredentials;
+import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.Models.AuthenticationCredentials;
 import com.example.kisaanonline.KisaanOnlineAPI;
-import com.example.kisaanonline.LoginResult;
-import com.example.kisaanonline.RegisterResult;
-import com.example.kisaanonline.LoginCredentials;
+import com.example.kisaanonline.ApiResults.LoginResult;
+import com.example.kisaanonline.Models.LoginCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
 
@@ -90,10 +87,10 @@ public class LoginFragment extends Fragment {
     }
 
     private void validate(String user, String pass) {
-        Call<APIToken> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(new Callback<APIToken>() {
+        Call<APITokenResult> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
+        callToken.enqueue(new Callback<APITokenResult>() {
             @Override
-            public void onResponse(Call<APIToken> callToken, Response<APIToken> response) {
+            public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
                 final String token = response.body().getToken();
                 Call<LoginResult> callLogin = api.loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
                 Log.v("CALL LOGIN : ", "" + callLogin);
@@ -122,7 +119,7 @@ public class LoginFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<APIToken> call, Throwable t) {
+            public void onFailure(Call<APITokenResult> call, Throwable t) {
                 Toast.makeText(getActivity(), "Call to KisaanOnline API Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

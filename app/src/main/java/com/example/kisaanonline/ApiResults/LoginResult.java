@@ -1,4 +1,4 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.ApiResults;
 
 import com.google.gson.annotations.SerializedName;
 

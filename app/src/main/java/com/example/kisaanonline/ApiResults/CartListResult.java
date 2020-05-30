@@ -1,16 +1,16 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.ApiResults;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class CartProducts {
+public class CartListResult {
     @SerializedName("data")
     private List<CartProduct> cartProductsList;
     @SerializedName("totalprice")
     private List<TotalPrice> totalPriceList;
 
-    public CartProducts(List<CartProduct> cartProductsList, List<TotalPrice> totalPriceList) {
+    public CartListResult(List<CartProduct> cartProductsList, List<TotalPrice> totalPriceList) {
         this.cartProductsList = cartProductsList;
         this.totalPriceList = totalPriceList;
     }

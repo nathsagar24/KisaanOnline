@@ -1,14 +1,14 @@
-package com.example.kisaanonline;
+package com.example.kisaanonline.ApiResults;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CartProductSaveResult {
+public class CartSaveResult {
     @SerializedName("iserror")
     private String isError;
     @SerializedName("errorString")
     private String errorString;
 
-    public CartProductSaveResult(String isError,String errorString) {
+    public CartSaveResult(String isError, String errorString) {
         this.isError = isError;
         this.errorString = errorString;
     }

@@ -15,13 +15,13 @@ import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-import com.example.kisaanonline.APIToken;
-import com.example.kisaanonline.AuthenticationCredentials;
-import com.example.kisaanonline.ProductDetailsList;
-import com.example.kisaanonline.ProductListAdapter;
-import com.example.kisaanonline.ProductListBody;
+import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.example.kisaanonline.ApiResults.ProductListResult;
+import com.example.kisaanonline.Adapters.ProductListAdapter;
+import com.example.kisaanonline.Models.ProductListBody;
 import com.example.kisaanonline.R;
-import com.example.kisaanonline.SearchCredentials;
+import com.example.kisaanonline.Models.SearchCredentials;
 import com.example.kisaanonline.Utils;
 
 import java.util.List;
@@ -89,28 +89,28 @@ public class HomeFragment extends Fragment {
 
     private void getSearchedProducts() {
 
-        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
+        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
-                new Callback<APIToken>() {
+                new Callback<APITokenResult>() {
                     @Override
-                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
-                        Call<ProductDetailsList> callSearchedProductsList = Utils.getAPIInstance()
+                        Call<ProductListResult> callSearchedProductsList = Utils.getAPIInstance()
                                 .getSearchedProducts(new SearchCredentials(searchView.getQuery().toString()
                                                                             , priceSeekBar.getSelectedMinValue().intValue()
                                                                             , priceSeekBar.getSelectedMaxValue().intValue()
                                                                             , 0)
                                         ,"Bearer " + token);
                         callSearchedProductsList.enqueue(
-                                new Callback<ProductDetailsList>() {
+                                new Callback<ProductListResult>() {
                                     @Override
-                                    public void onResponse(Call<ProductDetailsList> call, Response<ProductDetailsList> response) {
-                                        final List<ProductDetailsList.ProductDetails> productList = response.body().getData();
+                                    public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
+                                        final List<ProductListResult.ProductDetails> productList = response.body().getData();
                                         setProductListAdapter(productList);
                                     }
 
                                     @Override
-                                    public void onFailure(Call<ProductDetailsList> call, Throwable t) {
+                                    public void onFailure(Call<ProductListResult> call, Throwable t) {
 
                                     }
                                 }
@@ -118,7 +118,7 @@ public class HomeFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<APIToken> call, Throwable t) {
+                    public void onFailure(Call<APITokenResult> call, Throwable t) {
 
                     }
                 }
@@ -127,24 +127,24 @@ public class HomeFragment extends Fragment {
     }
 
     private void getProductList(){
-        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
+        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
-                new Callback<APIToken>() {
+                new Callback<APITokenResult>() {
                     @Override
-                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
-                        Call<ProductDetailsList> callProductList = Utils.getAPIInstance()
+                        Call<ProductListResult> callProductList = Utils.getAPIInstance()
                                                                 .getProductDetails(new ProductListBody(),"Bearer " + token);
                         callProductList.enqueue(
-                                new Callback<ProductDetailsList>() {
+                                new Callback<ProductListResult>() {
                                     @Override
-                                    public void onResponse(Call<ProductDetailsList> call, Response<ProductDetailsList> response) {
-                                        final List<ProductDetailsList.ProductDetails> productList = response.body().getData();
+                                    public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
+                                        final List<ProductListResult.ProductDetails> productList = response.body().getData();
                                         setProductListAdapter(productList);
                                     }
 
                                     @Override
-                                    public void onFailure(Call<ProductDetailsList> call, Throwable t) {
+                                    public void onFailure(Call<ProductListResult> call, Throwable t) {
 
                                     }
                                 }
@@ -152,14 +152,14 @@ public class HomeFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<APIToken> call, Throwable t) {
+                    public void onFailure(Call<APITokenResult> call, Throwable t) {
 
                     }
                 }
         );
     }
 
-    private void setProductListAdapter(List<ProductDetailsList.ProductDetails> productList) {
+    private void setProductListAdapter(List<ProductListResult.ProductDetails> productList) {
 
     productListRecyclerView.setAdapter( new ProductListAdapter(getActivity(), productList) );
     }
