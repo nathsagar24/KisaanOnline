@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,22 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kisaanonline.APIToken;
 import com.example.kisaanonline.AuthenticationCredentials;
-import com.example.kisaanonline.Fragments.LoginFragment;
 import com.example.kisaanonline.KisaanOnlineAPI;
-import com.example.kisaanonline.LoginAndRegisterResult;
-import com.example.kisaanonline.LoginCredentials;
+import com.example.kisaanonline.RegisterResult;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.RegistrationCredentials;
 import com.example.kisaanonline.Utils;
-
-import org.w3c.dom.Text;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -134,12 +126,12 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onResponse(Call<APIToken> callToken, Response<APIToken> response) {
                 final String token = response.body().getToken();
-                Call<LoginAndRegisterResult> callRegister = api
+                Call<RegisterResult> callRegister = api
                         .register(new RegistrationCredentials(user, email, pass, mobileNo, address, state, city, pincode),"Bearer " + token);
                 callRegister.enqueue(
-                        new Callback<LoginAndRegisterResult>() {
+                        new Callback<RegisterResult>() {
                             @Override
-                            public void onResponse(Call<LoginAndRegisterResult> callRegister, Response<LoginAndRegisterResult> response) {
+                            public void onResponse(Call<RegisterResult> callRegister, Response<RegisterResult> response) {
                                 Log.v("CALL LOGIN RESPONSE : ","" + response.code() + response.message());
                                 if(response.body().getIsError().equals("N")){
                                     Toast.makeText(getActivity(), "You are successfully registerd!",Toast.LENGTH_SHORT).show();
@@ -150,7 +142,7 @@ public class RegisterFragment extends Fragment {
                             }
 
                             @Override
-                            public void onFailure(Call<LoginAndRegisterResult> call, Throwable t) {
+                            public void onFailure(Call<RegisterResult> call, Throwable t) {
                                 Toast.makeText(getActivity(),"Register Failed : " + t.getMessage(),Toast.LENGTH_SHORT).show();
                                 isRegistered(false);
                             }

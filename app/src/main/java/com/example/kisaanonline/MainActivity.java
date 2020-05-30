@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.kisaanonline.Fragments.AboutFragment;
@@ -21,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.View;
@@ -30,6 +33,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 //Some error in backend Not giving getIsError == "Y" even after giving correct credentials
 //A post request that returns product_name, image, price, quantity based on username  ( already sent without quantity)
@@ -44,13 +51,12 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity
         {
 
-   // private DrawerLayout drawer;
     private LinearLayout cartContent,displayOptions;
     private MenuItem cartMenuItem, hamburgerMenuItem;
     private TextView homeOption,aboutOption,contactOption;
-    //private  NavigationView navigationView;
     private Button cartDetailsBtn;
-    private String usernameOrEmail;
+    private RecyclerView cartRecyclerView;
+    private TextView cartTotalPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,9 @@ public class MainActivity extends AppCompatActivity
         aboutOption=findViewById(R.id.about_option);
         contactOption=findViewById(R.id.contact_option);
         cartDetailsBtn=findViewById(R.id.cart_details_btn);
+        cartRecyclerView = findViewById(R.id.cart_recycler_view);
+        cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        cartTotalPrice = findViewById(R.id.total_cart_amount);
 
         //Setting OnClick Listener
         cartDetailsBtn.setOnClickListener(
@@ -128,9 +137,15 @@ public class MainActivity extends AppCompatActivity
 
         //Utils.setFragment(MainActivity.this,new LoginFragment(),false);
         Utils.setFragment(MainActivity.this,new HomeFragment(),true);
+
+
     }
 
-    @Override
+    private void setCartProductListAdapter(CartProducts cartProducts) {
+            cartRecyclerView.setAdapter(new CartProductListAdapter(this, cartProducts));
+    }
+
+            @Override
     public void onBackPressed() {
         displayOptions.setVisibility(View.GONE);
         hamburgerMenuItem.setChecked(false);
@@ -156,6 +171,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_cart) {
             Toast.makeText(this, "Cart Action Button Clicked!!", Toast.LENGTH_SHORT).show();
+
             if (loggedIn()) {
                 if (cartMenuItem.isChecked()) {
                     cartContent.setVisibility(View.GONE);
@@ -165,6 +181,37 @@ public class MainActivity extends AppCompatActivity
                     hamburgerMenuItem.setChecked(false);
                     cartContent.setVisibility(View.VISIBLE);
                     cartMenuItem.setChecked(true);
+
+                        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
+                        callToken.enqueue(
+                                new Callback<APIToken>() {
+                                    @Override
+                                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                                        String token = response.body().getToken();
+                                        Call<CartProducts> callCartProducts = Utils.getAPIInstance().getCartProductList("Bearer " + token, Utils.userId);
+                                        callCartProducts.enqueue(
+                                                new Callback<CartProducts>() {
+                                                    @Override
+                                                    public void onResponse(Call<CartProducts> call, Response<CartProducts> response) {
+                                                        Log.v("RESPONSE: ", "Cart List Display");
+                                                        cartTotalPrice.setText("" + response.body().getTotalPriceList().get(0).getTotalPrice());
+                                                        setCartProductListAdapter(response.body());
+                                                    }
+                                                    @Override
+                                                    public void onFailure(Call<CartProducts> call, Throwable t) {
+
+                                                    }
+                                                }
+                                        );
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<APIToken> call, Throwable t) {
+
+                                    }
+                                }
+                        );
+
                 }
             } else {
                 Utils.setFragment(MainActivity.this,new LoginFragment(),false);
@@ -196,10 +243,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean loggedIn() {
-        SharedPreferences sharedPref=getSharedPreferences("UserCredentials",MODE_PRIVATE);
-        usernameOrEmail = sharedPref.getString("Username/Email",null);
-        if(usernameOrEmail!=null)return true;
-        else return false;
+        if(Utils.loggedIn == true)return true;
+        return false;
     }
 
 }

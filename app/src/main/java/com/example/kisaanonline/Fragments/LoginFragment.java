@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
@@ -19,7 +20,8 @@ import android.widget.Toast;
 import com.example.kisaanonline.APIToken;
 import com.example.kisaanonline.AuthenticationCredentials;
 import com.example.kisaanonline.KisaanOnlineAPI;
-import com.example.kisaanonline.LoginAndRegisterResult;
+import com.example.kisaanonline.LoginResult;
+import com.example.kisaanonline.RegisterResult;
 import com.example.kisaanonline.LoginCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
@@ -33,7 +35,6 @@ public class LoginFragment extends Fragment {
     private EditText username,password;
     private DrawerLayout drawer;
     private static final KisaanOnlineAPI api = Utils.getAPIInstance();
-    private boolean loggedIn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,8 +53,6 @@ public class LoginFragment extends Fragment {
                     public void onClick(View view) {
                         Toast.makeText(getActivity(), "Login Button Clicked!!", Toast.LENGTH_SHORT).show();
                         if(credentialsValid()){
-                            SharedPreferences sharedPref = getActivity().getSharedPreferences("User Credentials", Context.MODE_PRIVATE);
-                            sharedPref.edit().putString("Username/Email",username.getText().toString()).apply();
                             Utils.setFragment(getActivity(), new HomeFragment(), true);
                         }
                     }
@@ -77,13 +76,18 @@ public class LoginFragment extends Fragment {
             return false;
         }
         validate(user, pass);
-        if(!loggedIn){
+        if(!Utils.loggedIn){
             return false;
         }
         return true;
     }
 
-    private void isLoggedIn(boolean loginState){loggedIn = loginState;}
+    private void isLoggedIn(@Nullable String userId, boolean loginState){
+        Utils.loggedIn = loginState;
+        if(Utils.loggedIn){
+            Utils.userId = userId;
+        }
+    }
 
     private void validate(String user, String pass) {
         Call<APIToken> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
@@ -91,27 +95,27 @@ public class LoginFragment extends Fragment {
             @Override
             public void onResponse(Call<APIToken> callToken, Response<APIToken> response) {
                 final String token = response.body().getToken();
-                Call<LoginAndRegisterResult> callLogin = api.loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
+                Call<LoginResult> callLogin = api.loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
                 Log.v("CALL LOGIN : ", "" + callLogin);
                 Log.v("TOKEN : ", "" + token);
                 callLogin.enqueue(
-                        new Callback<LoginAndRegisterResult>() {
+                        new Callback<LoginResult>() {
                             @Override
-                            public void onResponse(Call<LoginAndRegisterResult> callLogin, Response<LoginAndRegisterResult> response) {
+                            public void onResponse(Call<LoginResult> callLogin, Response<LoginResult> response) {
                                 Log.v("CALL LOGIN RESPONSE : ","" + response.code() + response.message());
                                 if(response.body().getIsError().equals("N")){
                                     Toast.makeText(getActivity(), "You are successfully logged in",Toast.LENGTH_SHORT).show();
-                                    isLoggedIn(true);
+                                    isLoggedIn(response.body().getUserId(),true);
                                 }
                                 else {
                                     Toast.makeText(getActivity(),"Please give correct credentials!",Toast.LENGTH_SHORT).show();
-                                    isLoggedIn(false);}
+                                    isLoggedIn(null,false);}
                             }
 
                             @Override
-                            public void onFailure(Call<LoginAndRegisterResult> call, Throwable t) {
+                            public void onFailure(Call<LoginResult> call, Throwable t) {
                                 Toast.makeText(getActivity(),"Logging In Failed : " + t.getMessage(),Toast.LENGTH_SHORT).show();
-                                isLoggedIn(false);
+                                isLoggedIn(null,false);
                             }
                         }
                 );

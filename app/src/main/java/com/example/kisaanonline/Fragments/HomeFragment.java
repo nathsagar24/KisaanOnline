@@ -6,19 +6,22 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.example.kisaanonline.APIToken;
 import com.example.kisaanonline.AuthenticationCredentials;
-import com.example.kisaanonline.Authorizer;
 import com.example.kisaanonline.ProductDetailsList;
 import com.example.kisaanonline.ProductListAdapter;
+import com.example.kisaanonline.ProductListBody;
 import com.example.kisaanonline.R;
+import com.example.kisaanonline.SearchCredentials;
 import com.example.kisaanonline.Utils;
 
 import java.util.List;
@@ -33,26 +36,38 @@ public class HomeFragment extends Fragment {
     private RecyclerView productListRecyclerView;
     private RecyclerView.LayoutManager productListLayoutManager;
     private RecyclerView.Adapter productListAdapter;
+    private SearchView searchView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home,container,false);
-
         //Get References
         priceRange=v.findViewById(R.id.price_range);
         priceSeekBar=v.findViewById(R.id.price_seekbar);
 
         //Setting Up Product List
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
-        productListLayoutManager = new LinearLayoutManager(getActivity()){
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
+        productListLayoutManager = new LinearLayoutManager(getActivity());
         productListRecyclerView.setLayoutManager(productListLayoutManager);
         getProductList();
+
+        searchView = v.findViewById(R.id.search_bar);
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        Log.v("SEARCH CLICKED : ","YES");
+                        getSearchedProducts();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                }
+        );
 
         initialisePriceSeekBar(100,4000);
 
@@ -72,6 +87,45 @@ public class HomeFragment extends Fragment {
 
     }
 
+    private void getSearchedProducts() {
+
+        Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
+        callToken.enqueue(
+                new Callback<APIToken>() {
+                    @Override
+                    public void onResponse(Call<APIToken> call, Response<APIToken> response) {
+                        final String token = response.body().getToken();
+                        Call<ProductDetailsList> callSearchedProductsList = Utils.getAPIInstance()
+                                .getSearchedProducts(new SearchCredentials(searchView.getQuery().toString()
+                                                                            , priceSeekBar.getSelectedMinValue().intValue()
+                                                                            , priceSeekBar.getSelectedMaxValue().intValue()
+                                                                            , 0)
+                                        ,"Bearer " + token);
+                        callSearchedProductsList.enqueue(
+                                new Callback<ProductDetailsList>() {
+                                    @Override
+                                    public void onResponse(Call<ProductDetailsList> call, Response<ProductDetailsList> response) {
+                                        final List<ProductDetailsList.ProductDetails> productList = response.body().getData();
+                                        setProductListAdapter(productList);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ProductDetailsList> call, Throwable t) {
+
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void onFailure(Call<APIToken> call, Throwable t) {
+
+                    }
+                }
+        );
+
+    }
+
     private void getProductList(){
         Call<APIToken> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
@@ -80,7 +134,7 @@ public class HomeFragment extends Fragment {
                     public void onResponse(Call<APIToken> call, Response<APIToken> response) {
                         final String token = response.body().getToken();
                         Call<ProductDetailsList> callProductList = Utils.getAPIInstance()
-                                                                .getProductDetails(new Authorizer("alpesh") , "Bearer " + token);
+                                                                .getProductDetails(new ProductListBody(),"Bearer " + token);
                         callProductList.enqueue(
                                 new Callback<ProductDetailsList>() {
                                     @Override

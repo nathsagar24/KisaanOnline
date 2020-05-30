@@ -19,6 +19,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Utils {
     private static KisaanOnlineAPI api;
     private static final String BASE_URL = "http://103.106.20.186:9009/shoppingcart_api/";
+    public static boolean loggedIn;
+    public static String userId;
+
+
 
     public static void setFragment(FragmentActivity parentActivity, Fragment newFragment, boolean addToBackStack){
 
