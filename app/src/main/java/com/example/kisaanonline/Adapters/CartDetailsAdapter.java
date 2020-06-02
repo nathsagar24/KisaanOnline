@@ -17,7 +17,7 @@ import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartDetailsResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
-import com.example.kisaanonline.Models.ProductCredentialsList;
+import com.example.kisaanonline.Models.ProductCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
 import com.squareup.picasso.Picasso;
@@ -30,12 +30,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.CartDetailsViewHolder> {
-    private List<CartDetailsResult.Data> data;
+    private CartDetailsResult cartDetailsResult;
     private FragmentActivity context;
 
-    public CartDetailsAdapter(FragmentActivity context, List<CartDetailsResult.Data> data) {
+    public CartDetailsAdapter(FragmentActivity context, CartDetailsResult cartDetailsResult) {
         this.context = context;
-        this.data = data;
+        this.cartDetailsResult = cartDetailsResult;
     }
 
     public class CartDetailsViewHolder extends RecyclerView.ViewHolder {
@@ -64,28 +64,27 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
     @Override
     public void onBindViewHolder(@NonNull CartDetailsViewHolder holder, int position) {
         Log.v("POSITION : ","" + position);
-        holder.productName.setText(data.get(position).getProductName());
-        holder.price.setText("Rs. " + data.get(position).getPrice());
-        holder.total.setText("Rs. " + data.get(position).getTotal());
-        holder.gstPecent.setText("" + data.get(position).getGstPercent() + " %");
-        holder.gstAmt.setText("Rs. " + data.get(position).getGstAmt());
-        holder.qtyPicker.setMaxValue((int)data.get(position).getAvailableQty());
+        holder.productName.setText(cartDetailsResult.getDataList().get(position).getProductName());
+        holder.price.setText("Rs. " + cartDetailsResult.getDataList().get(position).getPrice());
+        holder.total.setText("Rs. " + cartDetailsResult.getDataList().get(position).getTotal());
+        holder.gstPecent.setText("" + cartDetailsResult.getDataList().get(position).getGstPercent() + " %");
+        holder.gstAmt.setText("Rs. " + cartDetailsResult.getDataList().get(position).getGstAmt());
+        holder.qtyPicker.setMaxValue((int) cartDetailsResult.getDataList().get(position).getAvailableQty());
         holder.qtyPicker.setMinValue(1);
-        holder.qtyPicker.setValue(data.get(position).getQty());
+        holder.qtyPicker.setValue(cartDetailsResult.getDataList().get(position).getQty());
         holder.qtyPicker.setOnValueChangedListener(
                 new NumberPicker.OnValueChangeListener() {
                     @Override
                     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                        //holder.qtyPicker.setValue(newVal);
-                        saveProductToCart(data.get(position).getProductId(),data.get(position).getVariantId(),newVal);
+                        saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal);
                     }
                 }
         );
-        if(data.get(position).getImageUrl()!=null){
+        if(cartDetailsResult.getDataList().get(position).getImageUrl()!=null){
             Picasso
                     .with(context)
                     .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            data.get(position).getImageUrl().substring(data.get(position).getImageUrl().lastIndexOf("\\") + 1))
+                            cartDetailsResult.getDataList().get(position).getImageUrl().substring(cartDetailsResult.getDataList().get(position).getImageUrl().lastIndexOf("\\") + 1))
                     .placeholder(R.drawable.ic_menu_camera)
                     .into(holder.productImage);
         }
@@ -93,8 +92,8 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
 
     @Override
     public int getItemCount() {
-        Log.v("ITEM COUNT : ", "" + data.size());
-        return data.size();
+        Log.v("ITEM COUNT : ", "" + cartDetailsResult.getDataList().size());
+        return cartDetailsResult.getDataList().size();
     }
 
     private void saveProductToCart(String productId, String variantId, int qty){
@@ -105,8 +104,8 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                     public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
 
-                        List<ProductCredentialsList.ProductCredentials> productCredentialsList = new ArrayList<>();
-                        productCredentialsList.add(new ProductCredentialsList.ProductCredentials(productId, variantId, qty));
+                        List<ProductCredentials> productCredentialsList = new ArrayList<>();
+                        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
                         Call<CartSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
                                                         productCredentialsList,
                                                         "Bearer " + token,

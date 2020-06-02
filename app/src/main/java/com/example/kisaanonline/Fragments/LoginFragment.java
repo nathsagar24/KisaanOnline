@@ -23,6 +23,7 @@ import com.example.kisaanonline.Models.LoginCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,7 +31,6 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
     private Button loginBtn, registerBtn;
     private EditText username,password;
-    private DrawerLayout drawer;
     private static final KisaanOnlineAPI api = Utils.getAPIInstance();
 
     @Override
@@ -38,91 +38,113 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
 
+        //Getting References`
         username=v.findViewById(R.id.user_name_or_email);
         password=v.findViewById(R.id.password);
         loginBtn = v.findViewById(R.id.login_btn);
         registerBtn = v.findViewById(R.id.register_btn);
-        drawer = getActivity().findViewById(R.id.drawer_layout);
 
+        //Setting OnClick Listeners
         loginBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(), "Login Button Clicked!!", Toast.LENGTH_SHORT).show();
-                        if(credentialsValid()){
-                            Utils.setFragment(getActivity(), new HomeFragment(), true);
-                        }
+                        loginBtnClicked();
                     }
                 }
         );
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Register Button Clicked!!", Toast.LENGTH_SHORT).show();
-                Utils.setFragment(getActivity(), new RegisterFragment(), false);
+                registerBtnClicked();
             }
         });
 
         return v;
     }
 
-    private boolean credentialsValid() {
-        String user = username.getText().toString(), pass = password.getText().toString();
+    private void registerBtnClicked() {
+
+        Utils.setFragment(getActivity(), new RegisterFragment(), false);
+
+    }
+
+    private void loginBtnClicked() {
+
+        if(isValidInput(username.getText().toString(), password.getText().toString())){
+            Utils.refreshToken(getActivity());
+            checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
+            //checkLoginCredentials1(username.getText().toString(), password.getText().toString());
+        }
+        else{
+            Toast.makeText(getActivity(), "Please Input proper Credentials!!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private boolean isValidInput(String user, String pass) {
         if(TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)){
             Toast.makeText(getActivity(),"Please fill up all the credentials!",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        validate(user, pass);
-        if(!Utils.loggedIn){
             return false;
         }
         return true;
     }
 
-    private void isLoggedIn(@Nullable String userId, boolean loginState){
-        Utils.loggedIn = loginState;
-        if(Utils.loggedIn){
-            Utils.userId = userId;
-        }
-    }
-
-    private void validate(String user, String pass) {
+  /*  private void checkLoginCredentials1(String user, String pass){
         Call<APITokenResult> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(new Callback<APITokenResult>() {
             @Override
             public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
-                final String token = response.body().getToken();
-                Call<LoginResult> callLogin = api.loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
-                Log.v("CALL LOGIN : ", "" + callLogin);
-                Log.v("TOKEN : ", "" + token);
-                callLogin.enqueue(
-                        new Callback<LoginResult>() {
-                            @Override
-                            public void onResponse(Call<LoginResult> callLogin, Response<LoginResult> response) {
-                                Log.v("CALL LOGIN RESPONSE : ","" + response.code() + response.message());
-                                if(response.body().getIsError().equals("N")){
-                                    Toast.makeText(getActivity(), "You are successfully logged in",Toast.LENGTH_SHORT).show();
-                                    isLoggedIn(response.body().getUserId(),true);
-                                }
-                                else {
-                                    Toast.makeText(getActivity(),"Please give correct credentials!",Toast.LENGTH_SHORT).show();
-                                    isLoggedIn(null,false);}
-                            }
-
-                            @Override
-                            public void onFailure(Call<LoginResult> call, Throwable t) {
-                                Toast.makeText(getActivity(),"Logging In Failed : " + t.getMessage(),Toast.LENGTH_SHORT).show();
-                                isLoggedIn(null,false);
-                            }
-                        }
-                );
+                if(response.code() == 200) {
+                    final String token = response.body().getToken();
+                    checkLoginCredentials2(user, pass, token);
+                }
+                else{
+                    Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<APITokenResult> call, Throwable t) {
-                Toast.makeText(getActivity(), "Call to KisaanOnline API Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }*/
+
+    private void checkLoginCredentials(String user, String pass, String token) {
+
+        Call<LoginResult> callLogin = api.loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
+        callLogin.enqueue(
+                new Callback<LoginResult>() {
+                    @Override
+                    public void onResponse(Call<LoginResult> callLogin, Response<LoginResult> response) {
+                        if (response.code() == 200) {
+                            if (response.body().getIsError().equals("N")) {
+                                setLoginState(response.body().getUserId(), true);
+                            } else {
+                                Toast.makeText(getActivity(), "Please give correct credentials! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
+                                setLoginState(null, false);
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<LoginResult> call, Throwable t) {
+                        setLoginState(null,false);
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+    }
+
+    private void setLoginState(@Nullable String userId, boolean loginState){
+        Utils.loggedIn = loginState;
+        if(Utils.loggedIn){
+            Utils.userId = userId;
+            Utils.setFragment(getActivity(), new HomeFragment(), true);
+        }
     }
 
 }

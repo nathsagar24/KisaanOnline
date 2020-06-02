@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.kisaanonline.ApiResults.CartListResult;
 import com.example.kisaanonline.R;
 import com.squareup.picasso.Picasso;
@@ -47,13 +49,13 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
 
     @Override
     public void onBindViewHolder(@NonNull CartProductViewHolder holder, int position) {
-        holder.cartProductNameAndQty.setText("" + cartListResult.getCartProductsList().get(position).getProductName() + " X " + cartListResult.getCartProductsList().get(position).getQuantity());
-        holder.cartProductPrice.setText("Rs: " + cartListResult.getCartProductsList().get(position).getProductPrice());
-        if(cartListResult.getCartProductsList().get(position).getImageUrl()!=null) {
-            Picasso
+        holder.cartProductNameAndQty.setText("" + cartListResult.getCartList().get(position).getProductName() + " X " + cartListResult.getCartList().get(position).getQuantity());
+        holder.cartProductPrice.setText("Rs: " + cartListResult.getCartList().get(position).getProductPrice());
+        if(cartListResult.getCartList().get(position).getImageUrl()!=null) {
+            Glide
                     .with(context)
                     .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            cartListResult.getCartProductsList().get(position).getImageUrl().substring(cartListResult.getCartProductsList().get(position).getImageUrl().lastIndexOf("\\") + 1))
+                            cartListResult.getCartList().get(position).getImageUrl().substring(cartListResult.getCartList().get(position).getImageUrl().lastIndexOf("\\") + 1))
                     .placeholder(R.drawable.ic_menu_camera)
                     .into(holder.icon);
         }
@@ -61,7 +63,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
 
     @Override
     public int getItemCount() {
-        return cartListResult.getCartProductsList().size();
+        return cartListResult.getCartList().size();
     }
 
 }

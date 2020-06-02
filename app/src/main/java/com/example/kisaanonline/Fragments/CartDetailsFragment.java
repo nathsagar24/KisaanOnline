@@ -60,7 +60,7 @@ public class CartDetailsFragment extends Fragment {
                                     public void onResponse(Call<CartDetailsResult> call, Response<CartDetailsResult> response) {
                                         if(response.code() == 200) {
                                             Toast.makeText(getActivity(), "Successfully Fetched Cart Details Data", Toast.LENGTH_SHORT).show();
-                                            setCartDetailsAdapter(response.body().getDataList());
+                                            setCartDetailsAdapter(response.body());
                                             subTotal.setText("Sub Total Rs. " + response.body().getTotalList().get(0).getSubTotal());
                                             totalGst.setText("Total GST Rs. " + response.body().getTotalList().get(0).getTotalGstAmt());
                                             netTotal.setText("Total Rs. " + response.body().getTotalList().get(0).getNetTotal());
@@ -98,7 +98,7 @@ public class CartDetailsFragment extends Fragment {
         return v;
     }
 
-    private void setCartDetailsAdapter(List<CartDetailsResult.Data> data){
+    private void setCartDetailsAdapter(CartDetailsResult data){
         cartDetailsRecyclerView.setAdapter(new CartDetailsAdapter(getActivity(), data));
     }
 

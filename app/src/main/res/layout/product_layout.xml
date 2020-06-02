@@ -13,7 +13,6 @@
         android:id="@+id/product_image"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/ic_menu_camera"
         android:layout_marginTop="15dp"
         android:scaleType="fitXY"
         />

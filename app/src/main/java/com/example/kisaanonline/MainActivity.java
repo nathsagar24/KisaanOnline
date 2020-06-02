@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,13 +51,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initialiseUtils();
-        setListenersToUtils();
+        Utils.setFragment(MainActivity.this,new HomeFragment(),true);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        //Initialising Menu Items
+        cartMenuItem = menu.findItem(R.id.action_cart);
+        hamburgerMenuItem = menu.findItem(R.id.action_hamburger);
+        profileMenuItem = menu.findItem(R.id.action_profile);
 
         intialiseMenuButtons();
 
-        Utils.setFragment(MainActivity.this,new HomeFragment(),true);
+        initialiseMenuUtils();
+        setListenersToUtils();
 
+        return true;
     }
 
     private void intialiseMenuButtons(){
@@ -81,27 +95,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void cartDetailsBtnClicked(){
-            Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
+            Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
             Utils.HOME_OPTION_COLOR.setValue(R.color.colorOrange);
-            Utils.setFragment(MainActivity.this, new HomeFragment(),true);
+            Utils.setFragment(this, new CartDetailsFragment(),true);
     }
 
     private void homeOptionClicked(){
             Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
             Utils.HOME_OPTION_COLOR.setValue(R.color.colorOrange);
-            Utils.setFragment(MainActivity.this, new HomeFragment(),true);
+            Utils.setFragment(this, new HomeFragment(),true);
     }
 
     private void aboutOptionClicked() {
         Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
         Utils.ABOUT_OPTION_COLOR.setValue(R.color.colorOrange);
-        Utils.setFragment(MainActivity.this, new AboutFragment(), true);
+        Utils.setFragment(this, new AboutFragment(), true);
     }
 
     private void contactOptionClicked(){
             Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
             Utils.CONTACT_OPTION_COLOR.setValue(R.color.colorOrange);
-            Utils.setFragment(MainActivity.this, new ContactUsFragment(),true);
+            Utils.setFragment(this, new ContactUsFragment(),true);
         }
 
 
@@ -114,10 +128,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case View.VISIBLE:
                         cartMenuItem.setChecked(true);
                         Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
+                        break;
                     case View.INVISIBLE:
                         cartMenuItem.setChecked(false);
+                        break;
                     case View.GONE:
                         cartMenuItem.setChecked(false);
+                        break;
                     default:
                         cartMenuItem.setChecked(false);
                 }
@@ -133,10 +150,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case View.VISIBLE:
                         hamburgerMenuItem.setChecked(true);
                         Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
+                        break;
                     case View.INVISIBLE:
                         hamburgerMenuItem.setChecked(false);
+                        break;
                     case View.GONE:
                         hamburgerMenuItem.setChecked(false);
+                        break;
                     default:
                         hamburgerMenuItem.setChecked(false);
                 }
@@ -152,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         homeOption.setTextColor(getResources().getColor(R.color.colorOrange, null));
                         aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         contactOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        break;
                     default:
 
                 }
@@ -166,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         aboutOption.setTextColor(getResources().getColor(R.color.colorOrange, null));
                         homeOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         contactOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        break;
                     default:
 
                 }
@@ -180,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         contactOption.setTextColor(getResources().getColor(R.color.colorOrange, null));
                         homeOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
                         aboutOption.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                        break;
                     default:
 
                 }
@@ -187,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void initialiseUtils(){
+    private void initialiseMenuUtils(){
         Log.v("REFERENCE : ","" + Utils.CART_LIST_VISIBILITY + " " + Utils.DISPLAY_OPTIONS_VISIBILITY + " "
                 + Utils.HOME_OPTION_COLOR + " " + Utils.ABOUT_OPTION_COLOR + " " + Utils.CONTACT_OPTION_COLOR);
         Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
@@ -195,19 +218,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Utils.HOME_OPTION_COLOR.setValue(R.color.colorOrange);
         Utils.ABOUT_OPTION_COLOR.setValue(R.color.colorBlack);
         Utils.CONTACT_OPTION_COLOR.setValue(R.color.colorBlack);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        //Initialising Menu Items
-        cartMenuItem = menu.findItem(R.id.action_cart);
-        hamburgerMenuItem = menu.findItem(R.id.action_hamburger);
-        profileMenuItem = menu.findItem(R.id.action_profile);
-
-        return true;
     }
 
     @Override
@@ -294,12 +304,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.cart_details_btn:
                 cartDetailsBtnClicked();
+                break;
             case R.id.home_option:
                 homeOptionClicked();
+                break;
             case R.id.about_option:
                 aboutOptionClicked();
+                break;
             case R.id.contact_option:
                 contactOptionClicked();
+                break;
+            default:
         }
     }
 

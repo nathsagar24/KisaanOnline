@@ -6,38 +6,30 @@ import java.util.List;
 
 public class CartListResult {
     @SerializedName("data")
-    private List<CartProduct> cartProductsList;
+    private List<CartProduct> cartList;
     @SerializedName("totalprice")
     private List<TotalPrice> totalPriceList;
 
-    public CartListResult(List<CartProduct> cartProductsList, List<TotalPrice> totalPriceList) {
-        this.cartProductsList = cartProductsList;
+    public CartListResult(List<CartProduct> cartList, List<TotalPrice> totalPriceList) {
+        this.cartList = cartList;
         this.totalPriceList = totalPriceList;
     }
 
-    public List<CartProduct> getCartProductsList() {
-        return cartProductsList;
-    }
-
-    public void setCartProductsList(List<CartProduct> cartProductsList) {
-        this.cartProductsList = cartProductsList;
+    public List<CartProduct> getCartList() {
+        return cartList;
     }
 
     public List<TotalPrice> getTotalPriceList() {
         return totalPriceList;
     }
 
-    public void setTotalPriceList(List<TotalPrice> totalPriceList) {
-        this.totalPriceList = totalPriceList;
-    }
-
-    public static class CartProduct{
+    public class CartProduct{
         @SerializedName("productname")
         private String productName;
         @SerializedName("image")
         private String imageUrl;
         @SerializedName("quantity")
-        private int quantity;
+        private Integer quantity;
         @SerializedName("productprice")
         private float productPrice;
         @SerializedName("productid")
@@ -58,52 +50,28 @@ public class CartListResult {
             return productName;
         }
 
-        public void setProductName(String productName) {
-            this.productName = productName;
-        }
-
         public String getImageUrl() {
             return imageUrl;
-        }
-
-        public void setImageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
         }
 
         public int getQuantity() {
             return quantity;
         }
 
-        public void setQuantity(int quantity) {
-            this.quantity = quantity;
-        }
-
         public float getProductPrice() {
             return productPrice;
-        }
-
-        public void setProductPrice(float productPrice) {
-            this.productPrice = productPrice;
         }
 
         public String getProductId() {
             return productId;
         }
 
-        public void setProductId(String productId) {
-            this.productId = productId;
-        }
-
         public String getVariantId() {
             return variantId;
         }
-
-        public void setVariantId(String variantId) {
-            this.variantId = variantId;
-        }
     }
 
-    public static class TotalPrice{
+    public class TotalPrice{
         @SerializedName("sum(price*quantity)")
         private float totalPrice;
 
@@ -113,10 +81,6 @@ public class CartListResult {
 
         public float getTotalPrice() {
             return totalPrice;
-        }
-
-        public void setTotalPrice(float totalPrice) {
-            this.totalPrice = totalPrice;
         }
     }
 }

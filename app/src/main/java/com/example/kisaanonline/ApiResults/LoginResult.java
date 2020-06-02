@@ -7,25 +7,27 @@ public class LoginResult {
     private String userId;
     @SerializedName("iserror")
     private String isError;
+    @SerializedName("errorString")
+    private String errorString;
+    @SerializedName("errorTitle")
+    private String errorTitle;
 
-    public LoginResult(String userId, String isError) {
+    public LoginResult(String userId, String isError, String errorString, String errorTitle) {
         this.userId = userId;
         this.isError = isError;
+        this.errorString = errorString;
+        this.errorTitle = errorTitle;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getIsError() {
         return isError;
     }
 
-    public void setIsError(String isError) {
-        this.isError = isError;
-    }
+    public String getErrorString() { return errorString; }
+
+    public String getErrorTitle() { return errorTitle; }
 }

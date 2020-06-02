@@ -7,18 +7,19 @@ import java.util.List;
 public class ProductListResult {
     @SerializedName("data")
     private List<ProductDetails> data;
+    @SerializedName("iserror")
+    private String isError;
 
-    public ProductListResult(List<ProductDetails> data) {
+    public ProductListResult(List<ProductDetails> data, String isError) {
         this.data = data;
+        this.isError = isError;
     }
 
     public List<ProductDetails> getData() {
         return data;
     }
 
-    public void setData(List<ProductDetails> data) {
-        this.data = data;
-    }
+    public String getIsError() { return isError; }
 
     public class ProductDetails{
 
@@ -49,40 +50,20 @@ public class ProductListResult {
             return productName;
         }
 
-        public void setProductName(String productName) {
-            this.productName = productName;
-        }
-
         public String getPrice() {
             return price;
-        }
-
-        public void setPrice(String price) {
-            this.price = price;
         }
 
         public String getImageUrl() {
             return imageUrl;
         }
 
-        public void setImageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
-        }
-
         public String getProductId() {
             return productId;
         }
 
-        public void setProductId(String productId) {
-            this.productId = productId;
-        }
-
         public String getVariantId() {
             return variantId;
-        }
-
-        public void setVariantId(String variantId) {
-            this.variantId = variantId;
         }
 
     }

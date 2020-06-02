@@ -10,6 +10,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.Models.AuthenticationCredentials;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -23,7 +26,9 @@ public class Utils {
     private static final String BASE_URL = "http://103.106.20.186:9009/shoppingcart_api/";
     public static boolean loggedIn;
     public static String userId;
-    public static MutableLiveData<Integer> CART_LIST_VISIBILITY , DISPLAY_OPTIONS_VISIBILITY, HOME_OPTION_COLOR, ABOUT_OPTION_COLOR,CONTACT_OPTION_COLOR;
+    public static MutableLiveData<Integer> CART_LIST_VISIBILITY = new MutableLiveData<>(), DISPLAY_OPTIONS_VISIBILITY = new MutableLiveData<>()
+            , HOME_OPTION_COLOR = new MutableLiveData<>(), ABOUT_OPTION_COLOR = new MutableLiveData<>(), CONTACT_OPTION_COLOR = new MutableLiveData<>();
+    public static String token;
 
     public static void setFragment(FragmentActivity parentActivity, Fragment newFragment, boolean addToBackStack){
 
@@ -41,7 +46,6 @@ public class Utils {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
-
             Retrofit retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(okHttpClient)
@@ -50,6 +54,31 @@ public class Utils {
             api = retrofit.create(KisaanOnlineAPI.class);
         }
         return api;
+    }
+
+    public static void refreshToken(Context context){
+        Call<APITokenResult> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
+        callToken.enqueue(new Callback<APITokenResult>() {
+            @Override
+            public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
+                if(response.code() == 200) {
+                    final String token = response.body().getToken();
+                    refreshToken2(token);
+                }
+                else{
+                    Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APITokenResult> call, Throwable t) {
+                Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void refreshToken2(String newToken){
+        Utils.token = newToken;
     }
 
 }

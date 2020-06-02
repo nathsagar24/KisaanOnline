@@ -1,17 +1,22 @@
 package com.example.kisaanonline.Fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
@@ -35,13 +40,13 @@ public class HomeFragment extends Fragment {
     private TextView priceRange;
     private RecyclerView productListRecyclerView;
     private RecyclerView.LayoutManager productListLayoutManager;
-    private RecyclerView.Adapter productListAdapter;
     private SearchView searchView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home,container,false);
+
         //Get References
         priceRange=v.findViewById(R.id.price_range);
         priceSeekBar=v.findViewById(R.id.price_seekbar);
@@ -50,15 +55,17 @@ public class HomeFragment extends Fragment {
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
         productListLayoutManager = new LinearLayoutManager(getActivity());
         productListRecyclerView.setLayoutManager(productListLayoutManager);
-        getProductList();
+        getProductList1();
 
+        //Setting Up Search
         searchView = v.findViewById(R.id.search_bar);
         searchView.setOnQueryTextListener(
                 new SearchView.OnQueryTextListener() {
                     @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        Log.v("SEARCH CLICKED : ","YES");
-                        getSearchedProducts();
+                    public boolean onQueryTextSubmit(String searchKeyword) {
+                        hideSoftKeyboard(getActivity(), searchView.getWindowToken());
+                        if(searchKeyword.isEmpty()) {Toast.makeText(getActivity(), "Please Enter Something!!",Toast.LENGTH_SHORT).show();return false;}
+                        getSearchedProducts1(searchKeyword);
                         return true;
                     }
 
@@ -69,13 +76,19 @@ public class HomeFragment extends Fragment {
                 }
         );
 
-        initialisePriceSeekBar(100,4000);
+        setPriceSeekbarListener();
 
         return v;
     }
 
-    private void initialisePriceSeekBar(int minValue, int maxValue) {
+    private void hideSoftKeyboard(Activity activity, IBinder windowToken){
 
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0);
+
+    }
+
+    private void setPriceSeekbarListener() {
         priceSeekBar.setOnRangeSeekbarChangeListener(
                 new OnRangeSeekbarChangeListener() {
                     @Override
@@ -87,80 +100,108 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void getSearchedProducts() {
+    private void getSearchedProducts1(String searchKeyword) {
 
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
                 new Callback<APITokenResult>() {
                     @Override
                     public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        final String token = response.body().getToken();
-                        Call<ProductListResult> callSearchedProductsList = Utils.getAPIInstance()
-                                .getSearchedProducts(new SearchCredentials(searchView.getQuery().toString()
-                                                                            , priceSeekBar.getSelectedMinValue().intValue()
-                                                                            , priceSeekBar.getSelectedMaxValue().intValue()
-                                                                            , 0)
-                                        ,"Bearer " + token);
-                        callSearchedProductsList.enqueue(
-                                new Callback<ProductListResult>() {
-                                    @Override
-                                    public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
-                                        final List<ProductListResult.ProductDetails> productList = response.body().getData();
-                                        setProductListAdapter(productList);
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ProductListResult> call, Throwable t) {
-
-                                    }
-                                }
-                        );
+                        if(response.code() == 200) {
+                            final String token = response.body().getToken();
+                            getSearchedProducts2(searchKeyword, token);
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<APITokenResult> call, Throwable t) {
-
+                            Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         );
 
     }
 
-    private void getProductList(){
+    private void getSearchedProducts2(String searchKeyword, String token) {
+        Call<ProductListResult> callSearchedProductsList = Utils.getAPIInstance()
+                .getSearchedProducts(new SearchCredentials(searchKeyword
+                                , priceSeekBar.getSelectedMinValue().intValue()
+                                , priceSeekBar.getSelectedMaxValue().intValue()
+                                , 0)
+                        ,"Bearer " + token);
+        callSearchedProductsList.enqueue(
+                new Callback<ProductListResult>() {
+                    @Override
+                    public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
+                        if(response.code() == 200) {
+                            final List<ProductListResult.ProductDetails> productList = response.body().getData();
+                            setProductListAdapter(productList);
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody() , Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ProductListResult> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    private void getProductList1(){
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
                 new Callback<APITokenResult>() {
                     @Override
                     public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        final String token = response.body().getToken();
-                        Call<ProductListResult> callProductList = Utils.getAPIInstance()
-                                                                .getProductDetails(new ProductListBody(),"Bearer " + token);
-                        callProductList.enqueue(
-                                new Callback<ProductListResult>() {
-                                    @Override
-                                    public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
-                                        final List<ProductListResult.ProductDetails> productList = response.body().getData();
-                                        setProductListAdapter(productList);
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ProductListResult> call, Throwable t) {
-
-                                    }
-                                }
-                        );
+                        if(response.code() == 200) {
+                            final String token = response.body().getToken();
+                            getProductList2(token);
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<APITokenResult> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
 
+    private void getProductList2(String token) {
+        Call<ProductListResult> callProductList = Utils.getAPIInstance()
+                .getProductList(new ProductListBody(),
+                        "Bearer " + token);
+        callProductList.enqueue(
+                new Callback<ProductListResult>() {
+                    @Override
+                    public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
+                        if(response.code() == 200) {
+                            final List<ProductListResult.ProductDetails> productList = response.body().getData();
+                            setProductListAdapter(productList);
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ProductListResult> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         );
     }
 
     private void setProductListAdapter(List<ProductListResult.ProductDetails> productList) {
-
     productListRecyclerView.setAdapter( new ProductListAdapter(getActivity(), productList) );
     }
 

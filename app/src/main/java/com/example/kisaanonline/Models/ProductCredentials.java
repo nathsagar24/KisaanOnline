@@ -2,22 +2,7 @@ package com.example.kisaanonline.Models;
 
 import java.util.List;
 
-public class ProductCredentialsList {
-    private List<ProductCredentials> productCredentialsList;
-
-    public ProductCredentialsList(List<ProductCredentialsList.ProductCredentials> productCredentialsList) {
-        this.productCredentialsList = productCredentialsList;
-    }
-
-    public List<ProductCredentials> getProductCredentialsList() {
-        return productCredentialsList;
-    }
-
-    public void setProductCredentialsList(List<ProductCredentials> productCredentialsList) {
-        this.productCredentialsList = productCredentialsList;
-    }
-
-    public static class ProductCredentials {
+    public class ProductCredentials {
         private String productid, variantid;
         private int quantity;
 
@@ -51,4 +36,3 @@ public class ProductCredentialsList {
             this.quantity = quantity;
         }
     }
-}

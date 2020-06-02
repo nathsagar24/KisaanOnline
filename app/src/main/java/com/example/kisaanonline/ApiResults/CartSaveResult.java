@@ -7,25 +7,27 @@ public class CartSaveResult {
     private String isError;
     @SerializedName("errorString")
     private String errorString;
+    @SerializedName("errorTitle")
+    private String errorTitle;
+    @SerializedName("errorType")
+    private String errorType;
 
-    public CartSaveResult(String isError, String errorString) {
+    public CartSaveResult(String isError, String errorString, String errorTitle, String errorType) {
         this.isError = isError;
         this.errorString = errorString;
+        this.errorTitle = errorTitle;
+        this.errorType = errorType;
     }
 
     public String getErrorString() {
         return errorString;
     }
 
-    public void setErrorString(String errorString) {
-        this.errorString = errorString;
-    }
-
     public String getIsError() {
         return isError;
     }
 
-    public void setIsError(String isError) {
-        this.isError = isError;
-    }
+    public String getErrorTitle() { return errorTitle; }
+
+    public String getErrorType() { return errorType; }
 }

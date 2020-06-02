@@ -12,16 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
 import com.example.kisaanonline.ApiResults.ProductListResult;
 import com.example.kisaanonline.Fragments.CartDetailsFragment;
 import com.example.kisaanonline.Fragments.LoginFragment;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
-import com.example.kisaanonline.Models.ProductCredentialsList;
+import com.example.kisaanonline.Models.ProductCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +31,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ProductViewHolder> {
-    private List<ProductListResult.ProductDetails> productDetailsList;
+    private List<ProductListResult.ProductDetails> productList;
     private FragmentActivity context;
 
-    public ProductListAdapter(FragmentActivity context, List<ProductListResult.ProductDetails> productDetailsList) {
+    public ProductListAdapter(FragmentActivity context, List<ProductListResult.ProductDetails> productList) {
         this.context = context;
-        this.productDetailsList = productDetailsList;
+        this.productList = productList;
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -59,16 +59,17 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        holder.productName.setText(productDetailsList.get(position).getProductName());
-        holder.productPrice.setText("Rs. : " + productDetailsList.get(position).getPrice());
-        if(productDetailsList.get(position).getImageUrl()!=null) {
-            Picasso
+        holder.productName.setText(productList.get(position).getProductName());
+        holder.productPrice.setText("Rs. : " + productList.get(position).getPrice());
+        //if(productDetailsList.get(position).getImageUrl()!=null) {
+            Glide
                     .with(context)
                     .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            productDetailsList.get(position).getImageUrl().substring(productDetailsList.get(position).getImageUrl().lastIndexOf("\\") + 1))
+                            productList.get(position).getImageUrl().substring(productList.get(position).getImageUrl().lastIndexOf("\\") + 1))
+                    //.error(R.drawable.ic_menu_camera)
                     .placeholder(R.drawable.ic_menu_camera)
                     .into(holder.productImage);
-        }
+        //}
             holder.productImage.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -82,7 +83,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     @Override
                     public void onClick(View view) {
                         if(!Utils.loggedIn) Utils.setFragment(context, new LoginFragment(), false);
-                        else addNewProductToCart(productDetailsList.get(position).getProductId(), productDetailsList.get(position).getVariantId(), 1);
+                        else addNewProductToCart(productList.get(position).getProductId(), productList.get(position).getVariantId(), 1);
                     }
                 }
         );
@@ -96,8 +97,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     @Override
                     public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         String token = response.body().getToken();
-                        List<ProductCredentialsList.ProductCredentials> productCredentialsList =new ArrayList<>();
-                        productCredentialsList.add(new ProductCredentialsList.ProductCredentials(productId, variantId, qty));
+                        List<ProductCredentials> productCredentialsList =new ArrayList<>();
+                        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
                         Call<CartSaveResult> callCartProductSaveResult = Utils.getAPIInstance().saveCartProduct(
                                                                                 productCredentialsList,
                                                                                 "Bearer " + token,
@@ -136,7 +137,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     @Override
         public int getItemCount() {
-            return productDetailsList.size();
+            return productList.size();
         }
 
     @Override

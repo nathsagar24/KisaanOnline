@@ -9,7 +9,7 @@ import com.example.kisaanonline.ApiResults.ProductListResult;
 import com.example.kisaanonline.ApiResults.RegisterResult;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
 import com.example.kisaanonline.Models.LoginCredentials;
-import com.example.kisaanonline.Models.ProductCredentialsList;
+import com.example.kisaanonline.Models.ProductCredentials;
 import com.example.kisaanonline.Models.ProductListBody;
 import com.example.kisaanonline.Models.RegistrationCredentials;
 import com.example.kisaanonline.Models.SearchCredentials;
@@ -44,7 +44,7 @@ public interface KisaanOnlineAPI{
     );
 
     @POST("services/get_product_list")
-    Call<ProductListResult> getProductDetails(
+    Call<ProductListResult> getProductList(
             @Body ProductListBody productListBody,
             @Header("Authorization") String token
     );
@@ -57,7 +57,7 @@ public interface KisaanOnlineAPI{
 
     @POST("services/cart/save_cartproduct_list")
     Call<CartSaveResult> saveCartProduct(
-            @Body List<ProductCredentialsList.ProductCredentials> productCredentials,
+            @Body List<ProductCredentials> productCredentials,
             @Header("Authorization") String token,
             @Header("user-id") String userId
     );

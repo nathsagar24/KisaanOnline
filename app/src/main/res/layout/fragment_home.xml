@@ -53,7 +53,7 @@
         android:id="@+id/price_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:min_value="100"
+        app:min_value="0"
         app:max_value="4000"
         app:steps="1"
         app:bar_color="@color/colorOrange"

@@ -19,16 +19,8 @@ public class CartDetailsResult {
         return dataList;
     }
 
-    public void setDataList(List<Data> dataList) {
-        this.dataList = dataList;
-    }
-
     public List<Total> getTotalList() {
         return totalList;
-    }
-
-    public void setTotalList(List<Total> totalList) {
-        this.totalList = totalList;
     }
 
     public static class Total{
@@ -49,29 +41,18 @@ public class CartDetailsResult {
             return subTotal;
         }
 
-        public void setSubTotal(float subTotal) {
-            this.subTotal = subTotal;
-        }
-
         public float getTotalGstAmt() {
             return totalGstAmt;
-        }
-
-        public void setTotalGstAmt(float totalGstAmt) {
-            this.totalGstAmt = totalGstAmt;
         }
 
         public float getNetTotal() {
             return netTotal;
         }
 
-        public void setNetTotal(float netTotal) {
-            this.netTotal = netTotal;
-        }
     }
 
 
-    public static class Data{
+    public class Data{
         @SerializedName("product_name")
         private String productName;
         @SerializedName("cart_detail_id")
@@ -116,96 +97,48 @@ public class CartDetailsResult {
             return productName;
         }
 
-        public void setProductName(String productName) {
-            this.productName = productName;
-        }
-
         public int getCartDetailId() {
             return cartDetailId;
-        }
-
-        public void setCartDetailId(int cartDetailId) {
-            this.cartDetailId = cartDetailId;
         }
 
         public int getQty() {
             return qty;
         }
 
-        public void setQty(int qty) {
-            this.qty = qty;
-        }
-
         public float getPrice() {
             return price;
-        }
-
-        public void setPrice(float price) {
-            this.price = price;
         }
 
         public float getTotal() {
             return total;
         }
 
-        public void setTotal(float total) {
-            this.total = total;
-        }
-
         public float getGstPercent() {
             return gstPercent;
-        }
-
-        public void setGstPercent(float gstPercent) {
-            this.gstPercent = gstPercent;
         }
 
         public float getGstAmt() {
             return gstAmt;
         }
 
-        public void setGstAmt(float gstAmt) {
-            this.gstAmt = gstAmt;
-        }
-
         public String getImageUrl() {
             return imageUrl;
-        }
-
-        public void setImageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
         }
 
         public String getProductId() {
             return productId;
         }
 
-        public void setProductId(String productId) {
-            this.productId = productId;
-        }
-
         public String getVariantId() {
             return variantId;
-        }
-
-        public void setVariantId(String variantId) {
-            this.variantId = variantId;
         }
 
         public String getAvailability() {
             return availability;
         }
 
-        public void setAvailability(String availability) {
-            this.availability = availability;
-        }
-
         public float getAvailableQty() {
             return availableQty;
-        }
-
-        public void setAvailableQty(float availableQty) {
-            this.availableQty = availableQty;
         }
 
     }
