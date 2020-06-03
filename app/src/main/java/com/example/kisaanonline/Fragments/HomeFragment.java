@@ -55,7 +55,10 @@ public class HomeFragment extends Fragment {
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
         productListLayoutManager = new LinearLayoutManager(getActivity());
         productListRecyclerView.setLayoutManager(productListLayoutManager);
-        getProductList1();
+        Log.v("ACTIVITY : ", "" + getActivity());
+        Utils.refreshToken(getActivity());
+        Log.v("TOKEN : ","" + Utils.token);
+        getProductList(Utils.token);
 
         //Setting Up Search
         searchView = v.findViewById(R.id.search_bar);
@@ -65,7 +68,8 @@ public class HomeFragment extends Fragment {
                     public boolean onQueryTextSubmit(String searchKeyword) {
                         hideSoftKeyboard(getActivity(), searchView.getWindowToken());
                         if(searchKeyword.isEmpty()) {Toast.makeText(getActivity(), "Please Enter Something!!",Toast.LENGTH_SHORT).show();return false;}
-                        getSearchedProducts1(searchKeyword);
+                        Utils.refreshToken(getActivity());
+                        getSearchedProducts(searchKeyword, Utils.token);
                         return true;
                     }
 
@@ -100,7 +104,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void getSearchedProducts1(String searchKeyword) {
+   /* private void getSearchedProducts1(String searchKeyword) {
 
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
@@ -124,8 +128,8 @@ public class HomeFragment extends Fragment {
         );
 
     }
-
-    private void getSearchedProducts2(String searchKeyword, String token) {
+*/
+    private void getSearchedProducts(String searchKeyword, String token) {
         Call<ProductListResult> callSearchedProductsList = Utils.getAPIInstance()
                 .getSearchedProducts(new SearchCredentials(searchKeyword
                                 , priceSeekBar.getSelectedMinValue().intValue()
@@ -137,8 +141,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
                         if(response.code() == 200) {
-                            final List<ProductListResult.ProductDetails> productList = response.body().getData();
-                            setProductListAdapter(productList);
+                            setProductListAdapter(response.body());
                         }
                         else{
                             Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody() , Toast.LENGTH_SHORT).show();
@@ -153,7 +156,7 @@ public class HomeFragment extends Fragment {
         );
     }
 
-    private void getProductList1(){
+    /*private void getProductList1(){
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
                 new Callback<APITokenResult>() {
@@ -174,9 +177,9 @@ public class HomeFragment extends Fragment {
                     }
                 }
         );
-    }
+    }*/
 
-    private void getProductList2(String token) {
+    private void getProductList(String token) {
         Call<ProductListResult> callProductList = Utils.getAPIInstance()
                 .getProductList(new ProductListBody(),
                         "Bearer " + token);
@@ -185,8 +188,12 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ProductListResult> call, Response<ProductListResult> response) {
                         if(response.code() == 200) {
-                            final List<ProductListResult.ProductDetails> productList = response.body().getData();
-                            setProductListAdapter(productList);
+                            if(response.body().getIsError().equals("N")) {
+                                setProductListAdapter(response.body());
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "Please give correct credentials!", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else{
                             Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
@@ -201,7 +208,7 @@ public class HomeFragment extends Fragment {
         );
     }
 
-    private void setProductListAdapter(List<ProductListResult.ProductDetails> productList) {
+    private void setProductListAdapter(ProductListResult productList) {
     productListRecyclerView.setAdapter( new ProductListAdapter(getActivity(), productList) );
     }
 

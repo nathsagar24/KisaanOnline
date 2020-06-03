@@ -45,7 +45,8 @@ public class CartDetailsFragment extends Fragment {
         //Setting Up Recycler View
         cartDetailsRecyclerView = v.findViewById(R.id.cart_product_details_recycler_view);
         cartDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        Utils.refreshToken(getActivity());
+        getCartDetails(Utils.token);
         //Populating the data
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
         callToken.enqueue(
@@ -53,7 +54,7 @@ public class CartDetailsFragment extends Fragment {
                     @Override
                     public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
-                        Call<CartDetailsResult> callCartDetails = Utils.getAPIInstance().getCartDetails("Bearer " + token, Utils.userId);
+                       /* Call<CartDetailsResult> callCartDetails = Utils.getAPIInstance().getCartDetails("Bearer " + token, Utils.userId);
                         callCartDetails.enqueue(
                                 new Callback<CartDetailsResult>() {
                                     @Override
@@ -75,7 +76,7 @@ public class CartDetailsFragment extends Fragment {
                                         Toast.makeText(getActivity(), "Call to API for Cart Details Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                        );
+                        );*/
                     }
 
                     @Override
@@ -96,6 +97,31 @@ public class CartDetailsFragment extends Fragment {
         );
 
         return v;
+    }
+
+    private void getCartDetails(String token){
+        Call<CartDetailsResult> callCartDetails = Utils.getAPIInstance().getCartDetails("Bearer " + token, Utils.userId);
+        callCartDetails.enqueue(
+                new Callback<CartDetailsResult>() {
+                    @Override
+                    public void onResponse(Call<CartDetailsResult> call, Response<CartDetailsResult> response) {
+                        if(response.code() == 200) {
+                            setCartDetailsAdapter(response.body());
+                            subTotal.setText("Sub Total Rs. " + response.body().getTotalList().get(0).getSubTotal());
+                            totalGst.setText("Total GST Rs. " + response.body().getTotalList().get(0).getTotalGstAmt());
+                            netTotal.setText("Total Rs. " + response.body().getTotalList().get(0).getNetTotal());
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CartDetailsResult> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private void setCartDetailsAdapter(CartDetailsResult data){

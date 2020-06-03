@@ -11,10 +11,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.kisaanonline.ApiResults.CartListResult;
 import com.example.kisaanonline.R;
-import com.squareup.picasso.Picasso;
 
 public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartProductViewHolder> {
 
@@ -29,13 +27,13 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
     }
 
     public class CartProductViewHolder extends RecyclerView.ViewHolder {
-        private ImageView icon;
-        private TextView cartProductNameAndQty,cartProductPrice;
+        private ImageView productImage;
+        private TextView productNameAndQty,productPrice;
         public CartProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            icon = itemView.findViewById(R.id.cart_product_image);
-            cartProductNameAndQty = itemView.findViewById(R.id.cart_product_name_and_qty);
-            cartProductPrice = itemView.findViewById(R.id.cart_product_price);
+            productImage = itemView.findViewById(R.id.cart_product_image);
+            productNameAndQty = itemView.findViewById(R.id.cart_product_name_and_qty);
+            productPrice = itemView.findViewById(R.id.cart_product_price);
 
         }
     }
@@ -49,16 +47,13 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
 
     @Override
     public void onBindViewHolder(@NonNull CartProductViewHolder holder, int position) {
-        holder.cartProductNameAndQty.setText("" + cartListResult.getCartList().get(position).getProductName() + " X " + cartListResult.getCartList().get(position).getQuantity());
-        holder.cartProductPrice.setText("Rs: " + cartListResult.getCartList().get(position).getProductPrice());
-        if(cartListResult.getCartList().get(position).getImageUrl()!=null) {
+        holder.productNameAndQty.setText("" + cartListResult.getCartList().get(position).getProductName() + " X " + cartListResult.getCartList().get(position).getQuantity());
+        holder.productPrice.setText("Rs: " + cartListResult.getCartList().get(position).getProductPrice());
             Glide
                     .with(context)
-                    .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            cartListResult.getCartList().get(position).getImageUrl().substring(cartListResult.getCartList().get(position).getImageUrl().lastIndexOf("\\") + 1))
+                    .load(cartListResult.getCartList().get(position).getImageUrl())
                     .placeholder(R.drawable.ic_menu_camera)
-                    .into(holder.icon);
-        }
+                    .into(holder.productImage);
     }
 
     @Override

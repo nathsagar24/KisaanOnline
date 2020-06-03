@@ -13,6 +13,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -57,24 +62,29 @@ public class Utils {
     }
 
     public static void refreshToken(Context context){
-        Call<APITokenResult> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(new Callback<APITokenResult>() {
-            @Override
-            public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
-                if(response.code() == 200) {
-                    final String token = response.body().getToken();
-                    refreshToken2(token);
+            Call<APITokenResult> callToken = getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
+            callToken.enqueue(new Callback<APITokenResult>() {
+                @Override
+                public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
+                    if (response.code() == 200) {
+                        final String token = response.body().getToken();
+                       /* final String expiryDateTimeString =response.body().getExpiry();
+                        try {
+                            Date expiryDateTime = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse(expiryDateTimeString);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }*/
+                        refreshToken2(token);
+                    } else {
+                        Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else{
-                    Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<APITokenResult> call, Throwable t) {
-                Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<APITokenResult> call, Throwable t) {
+                    Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     public static void refreshToken2(String newToken){

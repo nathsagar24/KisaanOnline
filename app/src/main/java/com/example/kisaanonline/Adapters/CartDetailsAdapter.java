@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartDetailsResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
@@ -39,7 +40,7 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
     }
 
     public class CartDetailsViewHolder extends RecyclerView.ViewHolder {
-        private TextView productName,price,total,gstPecent,gstAmt;
+        private TextView productName,price,total, gstPercent,gstAmt;
         private ImageView productImage;
         private NumberPicker qtyPicker;
         public CartDetailsViewHolder(@NonNull View itemView) {
@@ -47,7 +48,7 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
             productName = itemView.findViewById(R.id.product_name);
             price = itemView.findViewById(R.id.product_price);
             total = itemView.findViewById(R.id.total_product_price);
-            gstPecent = itemView.findViewById(R.id.gst_percent);
+            gstPercent = itemView.findViewById(R.id.gst_percent);
             gstAmt =itemView.findViewById(R.id.gst_amt);
             productImage = itemView.findViewById(R.id.product_image);
             qtyPicker = itemView.findViewById(R.id.quantity_picker);
@@ -63,40 +64,36 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull CartDetailsViewHolder holder, int position) {
-        Log.v("POSITION : ","" + position);
         holder.productName.setText(cartDetailsResult.getDataList().get(position).getProductName());
         holder.price.setText("Rs. " + cartDetailsResult.getDataList().get(position).getPrice());
         holder.total.setText("Rs. " + cartDetailsResult.getDataList().get(position).getTotal());
-        holder.gstPecent.setText("" + cartDetailsResult.getDataList().get(position).getGstPercent() + " %");
+        holder.gstPercent.setText("" + cartDetailsResult.getDataList().get(position).getGstPercent() + " %");
         holder.gstAmt.setText("Rs. " + cartDetailsResult.getDataList().get(position).getGstAmt());
         holder.qtyPicker.setMaxValue((int) cartDetailsResult.getDataList().get(position).getAvailableQty());
-        holder.qtyPicker.setMinValue(1);
+        holder.qtyPicker.setMinValue(Math.min(1, (int) cartDetailsResult.getDataList().get(position).getAvailableQty()));
         holder.qtyPicker.setValue(cartDetailsResult.getDataList().get(position).getQty());
         holder.qtyPicker.setOnValueChangedListener(
                 new NumberPicker.OnValueChangeListener() {
                     @Override
                     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                        saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal);
+                        Utils.refreshToken(context);
+                        saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal, Utils.token);
                     }
                 }
         );
-        if(cartDetailsResult.getDataList().get(position).getImageUrl()!=null){
-            Picasso
+            Glide
                     .with(context)
-                    .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            cartDetailsResult.getDataList().get(position).getImageUrl().substring(cartDetailsResult.getDataList().get(position).getImageUrl().lastIndexOf("\\") + 1))
+                    .load(cartDetailsResult.getDataList().get(position).getImageUrl())
                     .placeholder(R.drawable.ic_menu_camera)
                     .into(holder.productImage);
-        }
     }
 
     @Override
     public int getItemCount() {
-        Log.v("ITEM COUNT : ", "" + cartDetailsResult.getDataList().size());
         return cartDetailsResult.getDataList().size();
     }
 
-    private void saveProductToCart(String productId, String variantId, int qty){
+    /*private void saveProductToCart(String productId, String variantId, int qty){
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
         callToken.enqueue(
                 new Callback<APITokenResult>() {
@@ -141,6 +138,40 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                     }
                 }
         );
+    }*/
+
+    private void saveProductToCart(String productId, String variantId, int qty, String token){
+
+        List<ProductCredentials> productCredentialsList = new ArrayList<>();
+        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
+        Call<CartSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
+                productCredentialsList,
+                "Bearer " + token,
+                Utils.userId
+        );
+        callCartProductSave.enqueue(
+                new Callback<CartSaveResult>() {
+                    @Override
+                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
+                        if(response.code() == 200) {
+                            if (response.body().getIsError().equals("N")) {
+                                Toast.makeText(context, "Quantity Updated!!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "Please give correct credentials! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else{
+                            Toast.makeText(context, "API Call Succesful but Error: " +response.errorBody(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
+                        Toast.makeText(context, "API Call Failed: " + t.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
     }
 
 }

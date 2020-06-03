@@ -37,8 +37,7 @@ public class PaymentDetails extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_payment_details, container, false);
 
-        screenshotFileName = v.findViewById(R.id.screenshot_file_name);
-
+        //Setting Up Billing Details Btn
         billingDetailsBtn=v.findViewById(R.id.billing_details_btn);
         billingDetailsBtn.setOnClickListener(
                 new View.OnClickListener() {
@@ -49,6 +48,8 @@ public class PaymentDetails extends Fragment {
                 }
         );
 
+        //Setting Up Screenshot Uploading
+        screenshotFileName = v.findViewById(R.id.screenshot_file_name);
         screenshotChooserBtn=v.findViewById(R.id.screenshot_chooser_btn);
         screenshotChooserBtn.setOnClickListener(
                 new View.OnClickListener() {

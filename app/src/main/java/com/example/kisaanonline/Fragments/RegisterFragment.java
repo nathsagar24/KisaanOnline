@@ -36,9 +36,8 @@ public class RegisterFragment extends Fragment {
     private Button loginBtn,registerBtn;
     private EditText name, email, mobileNo, password, confirmPassword, address, pincode;
     private Spinner stateSelector, citySelector;
-    private DrawerLayout drawer;
     private boolean registered;
-    private static final KisaanOnlineAPI api = Utils.getAPIInstance();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,7 +45,6 @@ public class RegisterFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_register, container, false);
 
         //Get References
-        drawer = getActivity().findViewById(R.id.drawer_layout);
         name = v.findViewById(R.id.name);
         email = v.findViewById(R.id.email);
         mobileNo = v.findViewById(R.id.mobile_no);
@@ -63,8 +61,7 @@ public class RegisterFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(),"Login Button Clicked",Toast.LENGTH_SHORT).show();
-                        Utils.setFragment(getActivity(),new LoginFragment(),false);
+                        Utils.setFragment(getActivity(),new LoginFragment(),true);
                     }
                 }
         );
@@ -73,12 +70,13 @@ public class RegisterFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getActivity(),"Register Button Clicked",Toast.LENGTH_SHORT).show();
-                        if(registrationSuccesful()){
-                            SharedPreferences sharedPref = getActivity().getSharedPreferences("User Credentials", Context.MODE_PRIVATE);
-                            sharedPref.edit().putString("Username/Email",name.getText().toString()).apply();
-                            Utils.setFragment(getActivity(), new HomeFragment(), true);
-                        }
+                        Utils.refreshToken(getActivity());
+                        register(Utils.token);
+                       /* if(registrationSuccesful()){
+                            *//*SharedPreferences sharedPref = getActivity().getSharedPreferences("User Credentials", Context.MODE_PRIVATE);
+                            sharedPref.edit().putString("Username/Email",name.getText().toString()).apply();*//*
+                            Utils.setFragment(getActivity(), new LoginFragment(), true);
+                        }*/
 
                     }
                 }
@@ -87,7 +85,7 @@ public class RegisterFragment extends Fragment {
         return v;
     }
 
-    private boolean fieldsEmpty(){
+    private boolean areFieldsEmpty(){
         return TextUtils.isEmpty(name.getText().toString()) || TextUtils.isEmpty(email.getText().toString()) ||
                 TextUtils.isEmpty(mobileNo.getText().toString()) || TextUtils.isEmpty(password.getText().toString()) ||
                 TextUtils.isEmpty(confirmPassword.getText().toString()) || TextUtils.isEmpty(address.getText().toString()) ||
@@ -100,33 +98,58 @@ public class RegisterFragment extends Fragment {
     }
 
 
-    private boolean registrationSuccesful() {
-        if(fieldsEmpty()){
+    private void register(String token) {
+        if(areFieldsEmpty()){
             Toast.makeText(getActivity(),"Please fill up all the credentials!",Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
         else if(!validRegistration()){
             Toast.makeText(getActivity(),"Please give correct credentials!",Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
-        validate(name.getText().toString(), email.getText().toString(), password.getText().toString(),
+        Call<RegisterResult> callRegister = Utils.getAPIInstance()
+                .register(new RegistrationCredentials(name.getText().toString(), email.getText().toString(), password.getText().toString()
+                        , mobileNo.getText().toString(), address.getText().toString(), stateSelector.getSelectedItem().toString(),
+                        citySelector.getSelectedItem().toString(), pincode.getText().toString()),"Bearer " + token);
+        callRegister.enqueue(
+                new Callback<RegisterResult>() {
+                    @Override
+                    public void onResponse(Call<RegisterResult> callRegister, Response<RegisterResult> response) {
+                        if (response.code() == 200) {
+                            if (response.body().getIsError().equals("N")) {
+                                //isRegistered(true);
+                                Utils.setFragment(getActivity(), new LoginFragment(), true);
+                            } else {
+                                Toast.makeText(getActivity(), "Please give valid credentials! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
+                                //isRegistered(false);
+                            }
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RegisterResult> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                       // isRegistered(false);
+                    }
+                }
+        );
+        /*validate(name.getText().toString(), email.getText().toString(), password.getText().toString(),
                 mobileNo.getText().toString(), address.getText().toString(), stateSelector.getSelectedItem().toString(),
-                citySelector.getSelectedItem().toString(), pincode.getText().toString());
-        if(!registered){
-            return false;
-        }
-        return true;
+                citySelector.getSelectedItem().toString(), pincode.getText().toString());*/
         }
 
     private void isRegistered(boolean registrationState){registered = registrationState;}
 
-    private void validate(String user, String email, String pass, String mobileNo, String address,String state, String city, String pincode) {
-        Call<APITokenResult> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
+   /* private void validate(String user, String email, String pass, String mobileNo, String address,String state, String city, String pincode) {
+        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(new Callback<APITokenResult>() {
             @Override
             public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
                 final String token = response.body().getToken();
-                Call<RegisterResult> callRegister = api
+                Call<RegisterResult> callRegister = Utils.getAPIInstance()
                         .register(new RegistrationCredentials(user, email, pass, mobileNo, address, state, city, pincode),"Bearer " + token);
                 callRegister.enqueue(
                         new Callback<RegisterResult>() {
@@ -155,7 +178,7 @@ public class RegisterFragment extends Fragment {
                 Toast.makeText(getActivity(), "Call to KisaanOnline API Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
+    }*/
 
 
 

@@ -31,7 +31,6 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
     private Button loginBtn, registerBtn;
     private EditText username,password;
-    private static final KisaanOnlineAPI api = Utils.getAPIInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,7 +112,7 @@ public class LoginFragment extends Fragment {
 
     private void checkLoginCredentials(String user, String pass, String token) {
 
-        Call<LoginResult> callLogin = api.loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
+        Call<LoginResult> callLogin = Utils.getAPIInstance().loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
         callLogin.enqueue(
                 new Callback<LoginResult>() {
                     @Override

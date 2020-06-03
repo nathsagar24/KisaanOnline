@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import okhttp3.internal.Util;
 import retrofit2.Call;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Utils.setFragment(MainActivity.this,new HomeFragment(),true);
+        Utils.setFragment(MainActivity.this,new HomeFragment(),false);
 
     }
 
@@ -211,8 +212,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initialiseMenuUtils(){
-        Log.v("REFERENCE : ","" + Utils.CART_LIST_VISIBILITY + " " + Utils.DISPLAY_OPTIONS_VISIBILITY + " "
-                + Utils.HOME_OPTION_COLOR + " " + Utils.ABOUT_OPTION_COLOR + " " + Utils.CONTACT_OPTION_COLOR);
         Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
         Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
         Utils.HOME_OPTION_COLOR.setValue(R.color.colorOrange);
@@ -231,16 +230,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
                 } else {
                     Utils.CART_LIST_VISIBILITY.setValue(View.VISIBLE);
-                    populateCartList1();
+                    Utils.refreshToken(this);
+                    populateCartList(Utils.token);
                 }
             } else {
-                Utils.setFragment(this,new LoginFragment(),false);
+                Utils.setFragment(this,new LoginFragment(),true);
             }
         }
         else if (id == R.id.action_profile){
             Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
             Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
-            Utils.setFragment(this,new LoginFragment(),false);
+            Utils.setFragment(this,new LoginFragment(),true);
         }
         else if(id == R.id.action_hamburger){
             if(hamburgerMenuItem.isChecked()) Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
@@ -253,12 +253,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
         Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
-        Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.display_fragment);
-        if(fragment instanceof  HomeFragment)finish();
+        /*Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.display_fragment);
+        if(fragment instanceof  HomeFragment)finish();*/
         super.onBackPressed();
     }
 
-    private void populateCartList1(){
+   /* private void populateCartList(){
 
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
         callToken.enqueue(
@@ -276,20 +276,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
         );
 
-    }
+    }*/
 
-    private void populateCartList2(String token){
+    private void populateCartList(String token){
         Call<CartListResult> callCartProducts = Utils.getAPIInstance().getCartList("Bearer " + token, Utils.userId);
         callCartProducts.enqueue(
                 new Callback<CartListResult>() {
                     @Override
                     public void onResponse(Call<CartListResult> call, Response<CartListResult> response) {
-                        cartTotalPrice.setText("" + response.body().getTotalPriceList().get(0).getTotalPrice());
-                        setCartListAdapter(response.body());
+                        if(response.code() == 200) {
+                            setCartListAdapter(response.body());
+                        }
+                        else{
+                            Toast.makeText(MainActivity.this, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                     @Override
                     public void onFailure(Call<CartListResult> call, Throwable t) {
-
+                        Toast.makeText(MainActivity.this, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         );

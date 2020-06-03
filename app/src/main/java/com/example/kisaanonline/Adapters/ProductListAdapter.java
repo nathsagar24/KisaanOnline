@@ -26,17 +26,18 @@ import com.example.kisaanonline.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ProductViewHolder> {
-    private List<ProductListResult.ProductDetails> productList;
+    private ProductListResult productListResult;
     private FragmentActivity context;
 
-    public ProductListAdapter(FragmentActivity context, List<ProductListResult.ProductDetails> productList) {
+    public ProductListAdapter(FragmentActivity context, ProductListResult productListResult) {
         this.context = context;
-        this.productList = productList;
+        this.productListResult = productListResult;
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -59,17 +60,13 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        holder.productName.setText(productList.get(position).getProductName());
-        holder.productPrice.setText("Rs. : " + productList.get(position).getPrice());
-        //if(productDetailsList.get(position).getImageUrl()!=null) {
+        holder.productName.setText(productListResult.getData().get(position).getProductName());
+        holder.productPrice.setText("Rs. : " + productListResult.getData().get(position).getPrice());
             Glide
                     .with(context)
-                    .load("http://103.106.20.186:9009/shoppingcart_api/resources/files/Product_Files/" +
-                            productList.get(position).getImageUrl().substring(productList.get(position).getImageUrl().lastIndexOf("\\") + 1))
-                    //.error(R.drawable.ic_menu_camera)
+                    .load(productListResult.getData().get(position).getImageUrl())
                     .placeholder(R.drawable.ic_menu_camera)
                     .into(holder.productImage);
-        //}
             holder.productImage.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -82,15 +79,19 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(!Utils.loggedIn) Utils.setFragment(context, new LoginFragment(), false);
-                        else addNewProductToCart(productList.get(position).getProductId(), productList.get(position).getVariantId(), 1);
+                        if(!Utils.loggedIn) Utils.setFragment(context, new LoginFragment(), true);
+                        else {
+                            Utils.refreshToken(context);
+                            addNewProductToCart(productListResult.getData().get(position).getProductId(),
+                                    productListResult.getData().get(position).getVariantId(), 1, Utils.token);
+                        }
+                        }
                     }
-                }
         );
 
     }
 
-    private void addNewProductToCart(String productId, String variantId,int qty) {
+    /*private void addNewProductToCart(String productId, String variantId,int qty) {
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
         callToken.enqueue(
                 new Callback<APITokenResult>() {
@@ -133,16 +134,42 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     }
                 }
         );
+    }*/
+
+    private void addNewProductToCart(String productId, String variantId,int qty, String token) {
+        List<ProductCredentials> productCredentialsList =new ArrayList<>();
+        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
+        Call<CartSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
+                productCredentialsList,
+                "Bearer " + token,
+                Utils.userId
+        );
+        callCartProductSave.enqueue(
+                new Callback<CartSaveResult>() {
+                    @Override
+                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
+                        if(response.code() == 200) {
+                            if (response.body().getIsError().equals("N")) {
+                                Utils.setFragment(context, new CartDetailsFragment(), true);
+                            } else {
+                                Toast.makeText(context, "Please give correct credentials!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else{
+                            Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
+                        Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     @Override
         public int getItemCount() {
-            return productList.size();
+            return productListResult.getData().size();
         }
-
-    @Override
-    public void onViewDetachedFromWindow(@NonNull ProductViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-       // holder.addToCartBtn.setVisibility(View.GONE);
-    }
 }
