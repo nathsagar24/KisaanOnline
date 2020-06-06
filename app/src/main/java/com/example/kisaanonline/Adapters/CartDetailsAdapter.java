@@ -76,8 +76,14 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                 new NumberPicker.OnValueChangeListener() {
                     @Override
                     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                        Utils.refreshToken(context);
-                        saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal, Utils.token);
+                       // Utils.refreshToken(context);
+                        Utils.refreshToken(context, new Utils.TokenReceivedListener() {
+                            @Override
+                            public void onTokenReceived() {
+                                saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal, Utils.token);
+                            }
+                        });
+                        //saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal, Utils.token);
                     }
                 }
         );

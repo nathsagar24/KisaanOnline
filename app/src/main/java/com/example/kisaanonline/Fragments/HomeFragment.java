@@ -1,7 +1,6 @@
 package com.example.kisaanonline.Fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +18,20 @@ import android.widget.Toast;
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-import com.example.kisaanonline.ApiResults.APITokenResult;
-import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.example.kisaanonline.ApiResults.MaxPriceResult;
 import com.example.kisaanonline.ApiResults.ProductListResult;
 import com.example.kisaanonline.Adapters.ProductListAdapter;
-import com.example.kisaanonline.Models.ProductListBody;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Models.SearchCredentials;
 import com.example.kisaanonline.Utils;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
+//Setting Up not refreshing token without any reason but only when failed
+//Only Home Fragment and MainActivity done but giving timeout
 public class HomeFragment extends Fragment {
     private CrystalRangeSeekbar priceSeekBar;
     private TextView priceRange;
@@ -47,17 +44,16 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home,container,false);
 
-        //Get References
-        priceRange=v.findViewById(R.id.price_range);
-        priceSeekBar=v.findViewById(R.id.price_seekbar);
-
         //Setting Up Product List
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
         productListLayoutManager = new LinearLayoutManager(getActivity());
         productListRecyclerView.setLayoutManager(productListLayoutManager);
-        Log.v("ACTIVITY : ", "" + getActivity());
-        Utils.refreshToken(getActivity());
-        Log.v("TOKEN : ","" + Utils.token);
+       /* Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+            @Override
+            public void onTokenReceived() {
+                getProductList(Utils.token);
+            }
+        });*/
         getProductList(Utils.token);
 
         //Setting Up Search
@@ -68,20 +64,41 @@ public class HomeFragment extends Fragment {
                     public boolean onQueryTextSubmit(String searchKeyword) {
                         hideSoftKeyboard(getActivity(), searchView.getWindowToken());
                         if(searchKeyword.isEmpty()) {Toast.makeText(getActivity(), "Please Enter Something!!",Toast.LENGTH_SHORT).show();return false;}
-                        Utils.refreshToken(getActivity());
                         getSearchedProducts(searchKeyword, Utils.token);
                         return true;
                     }
 
                     @Override
-                    public boolean onQueryTextChange(String s) {
-                        return false;
+                    public boolean onQueryTextChange(String searchKeyword) {
+                        getSearchedProducts(searchKeyword, Utils.token);
+                        return true;
+                    }
+                }
+        );
+        searchView.setOnCloseListener(
+                new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        getProductList(Utils.token);
+                        return true;
                     }
                 }
         );
 
-        setPriceSeekbarListener();
 
+
+        //Setting Up Price Seekbar
+        priceRange = v.findViewById(R.id.price_range);
+        priceSeekBar = v.findViewById(R.id.price_seekbar);
+       /* Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+            @Override
+            public void onTokenReceived() {
+                Log.v("MAX PRICE TOKEN 0 : ", "" + Utils.token);
+                setMaxprice(Utils.token);
+            }
+        });*/
+        setMaxprice(Utils.token);
+        setPriceSeekbarListener();
         return v;
     }
 
@@ -90,6 +107,36 @@ public class HomeFragment extends Fragment {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0);
 
+    }
+
+    private void setMaxprice(String token){
+        Call<MaxPriceResult> callMaxPrice = Utils.getAPIInstance().getMaxPrice("Bearer " + token);
+        callMaxPrice.enqueue(new Callback<MaxPriceResult>() {
+            @Override
+            public void onResponse(Call<MaxPriceResult> call, Response<MaxPriceResult> response) {
+                if(response.code() == 200) {
+                    priceRange.setText("Filter: Rs. 0 - Rs. " + response.body().getMaxPrice());
+                    priceSeekBar.setMaxValue(response.body().getMaxPrice());
+                }
+                else if (response.code() == 401 || response.code() == 500){
+                    Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                        @Override
+                        public void onTokenReceived() {
+                            setMaxprice(Utils.token);
+                        }
+                    });
+                }
+                else{
+
+                    Toast.makeText(getActivity(), "Max Price API Call Succesful but Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MaxPriceResult> call, Throwable t) {
+                Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setPriceSeekbarListener() {
@@ -104,37 +151,10 @@ public class HomeFragment extends Fragment {
 
     }
 
-   /* private void getSearchedProducts1(String searchKeyword) {
-
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(
-                new Callback<APITokenResult>() {
-                    @Override
-                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        if(response.code() == 200) {
-                            final String token = response.body().getToken();
-                            getSearchedProducts2(searchKeyword, token);
-                        }
-                        else{
-                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<APITokenResult> call, Throwable t) {
-                            Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-    }
-*/
     private void getSearchedProducts(String searchKeyword, String token) {
         Call<ProductListResult> callSearchedProductsList = Utils.getAPIInstance()
                 .getSearchedProducts(new SearchCredentials(searchKeyword
-                                , priceSeekBar.getSelectedMinValue().intValue()
-                                , priceSeekBar.getSelectedMaxValue().intValue()
-                                , 0)
+                                , 0, 100)
                         ,"Bearer " + token);
         callSearchedProductsList.enqueue(
                 new Callback<ProductListResult>() {
@@ -143,8 +163,16 @@ public class HomeFragment extends Fragment {
                         if(response.code() == 200) {
                             setProductListAdapter(response.body());
                         }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    getSearchedProducts(searchKeyword, Utils.token);
+                                }
+                            });
+                        }
                         else{
-                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody() , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Search Products API Call Succesful but Error: " + response.code() , Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -156,32 +184,9 @@ public class HomeFragment extends Fragment {
         );
     }
 
-    /*private void getProductList1(){
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(
-                new Callback<APITokenResult>() {
-                    @Override
-                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        if(response.code() == 200) {
-                            final String token = response.body().getToken();
-                            getProductList2(token);
-                        }
-                        else{
-                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<APITokenResult> call, Throwable t) {
-                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-    }*/
-
     private void getProductList(String token) {
         Call<ProductListResult> callProductList = Utils.getAPIInstance()
-                .getProductList(new ProductListBody(),
+                .getProductList(new SearchCredentials("", 0, 100),
                         "Bearer " + token);
         callProductList.enqueue(
                 new Callback<ProductListResult>() {
@@ -195,8 +200,16 @@ public class HomeFragment extends Fragment {
                                 Toast.makeText(getActivity(), "Please give correct credentials!", Toast.LENGTH_SHORT).show();
                             }
                         }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    getProductList(Utils.token);
+                                }
+                            });
+                        }
                         else{
-                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Product List API Call Succesful but Error: " + response.code(), Toast.LENGTH_SHORT).show();
                         }
                     }
 

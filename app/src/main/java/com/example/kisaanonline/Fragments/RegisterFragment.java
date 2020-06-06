@@ -1,30 +1,32 @@
 package com.example.kisaanonline.Fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.kisaanonline.ApiResults.APITokenResult;
-import com.example.kisaanonline.Models.AuthenticationCredentials;
-import com.example.kisaanonline.KisaanOnlineAPI;
+import com.example.kisaanonline.ApiResults.CityListResult;
+import com.example.kisaanonline.ApiResults.PincodeListResult;
+import com.example.kisaanonline.ApiResults.StateListResult;
 import com.example.kisaanonline.ApiResults.RegisterResult;
+import com.example.kisaanonline.Models.CityCredentials;
+import com.example.kisaanonline.Models.PincodeCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Models.RegistrationCredentials;
 import com.example.kisaanonline.Utils;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,9 +36,8 @@ import retrofit2.Response;
 public class RegisterFragment extends Fragment {
 
     private Button loginBtn,registerBtn;
-    private EditText name, email, mobileNo, password, confirmPassword, address, pincode;
-    private Spinner stateSelector, citySelector;
-    private boolean registered;
+    private EditText name, email, mobileNo, password, confirmPassword, address ;
+    private Spinner stateSelector, citySelector, pincodeSelector;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,12 +52,61 @@ public class RegisterFragment extends Fragment {
         password = v.findViewById(R.id.password);
         confirmPassword = v.findViewById(R.id.confirm_password);
         address = v.findViewById(R.id.address);
+
+        //Setting Up selectors
         stateSelector = v.findViewById(R.id.state_selector);
         citySelector = v.findViewById(R.id.city_selector);
-        pincode = v.findViewById(R.id.pincode);
+        pincodeSelector = v.findViewById(R.id.pincode_selector);
+        stateSelector.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                        Toast.makeText(getActivity(),"STATE SELECTED",Toast.LENGTH_SHORT).show();
+                        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                            @Override
+                            public void onTokenReceived() {
+                                Utils.populateCityList(Utils.token, stateSelector.getSelectedItem().toString(), getActivity(), citySelector);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                }
+        );
+        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+            @Override
+            public void onTokenReceived() {
+                Utils.populateStateList(Utils.token, getActivity(), stateSelector);
+            }
+        });
+        //Setting Up city selector
+        citySelector.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                        Toast.makeText(getActivity(),"CITY SELECTED",Toast.LENGTH_SHORT).show();
+                        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                            @Override
+                            public void onTokenReceived() {
+                                Utils.populatePincodeList(Utils.token, stateSelector.getSelectedItem().toString(), citySelector.getSelectedItem().toString(), getActivity(), pincodeSelector);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                }
+        );
+
+
+        //Setting Up Login
         loginBtn=v.findViewById(R.id.login_btn);
         registerBtn=v.findViewById(R.id.register_btn);
-
         loginBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -70,13 +120,13 @@ public class RegisterFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Utils.refreshToken(getActivity());
-                        register(Utils.token);
-                       /* if(registrationSuccesful()){
-                            *//*SharedPreferences sharedPref = getActivity().getSharedPreferences("User Credentials", Context.MODE_PRIVATE);
-                            sharedPref.edit().putString("Username/Email",name.getText().toString()).apply();*//*
-                            Utils.setFragment(getActivity(), new LoginFragment(), true);
-                        }*/
+                        //Utils.refreshToken(getActivity());
+                        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                            @Override
+                            public void onTokenReceived() {
+                                register(Utils.token);
+                            }
+                        });
 
                     }
                 }
@@ -88,15 +138,15 @@ public class RegisterFragment extends Fragment {
     private boolean areFieldsEmpty(){
         return TextUtils.isEmpty(name.getText().toString()) || TextUtils.isEmpty(email.getText().toString()) ||
                 TextUtils.isEmpty(mobileNo.getText().toString()) || TextUtils.isEmpty(password.getText().toString()) ||
-                TextUtils.isEmpty(confirmPassword.getText().toString()) || TextUtils.isEmpty(address.getText().toString()) ||
-                TextUtils.isEmpty(pincode.getText().toString());
+                TextUtils.isEmpty(confirmPassword.getText().toString()) || TextUtils.isEmpty(address.getText().toString())
+                //|| TextUtils.isEmpty(pincode.getText().toString())
+        ;
     }
 
     private boolean validRegistration(){
         return Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches() && mobileNo.getText().toString().length() == 10
-                && password.getText().toString().equals(confirmPassword.getText().toString()) && pincode.getText().toString().length() == 6;
+                && password.getText().toString().equals(confirmPassword.getText().toString());
     }
-
 
     private void register(String token) {
         if(areFieldsEmpty()){
@@ -110,7 +160,7 @@ public class RegisterFragment extends Fragment {
         Call<RegisterResult> callRegister = Utils.getAPIInstance()
                 .register(new RegistrationCredentials(name.getText().toString(), email.getText().toString(), password.getText().toString()
                         , mobileNo.getText().toString(), address.getText().toString(), stateSelector.getSelectedItem().toString(),
-                        citySelector.getSelectedItem().toString(), pincode.getText().toString()),"Bearer " + token);
+                        citySelector.getSelectedItem().toString(), pincodeSelector.getSelectedItem().toString()),"Bearer " + token);
         callRegister.enqueue(
                 new Callback<RegisterResult>() {
                     @Override
@@ -140,48 +190,5 @@ public class RegisterFragment extends Fragment {
                 mobileNo.getText().toString(), address.getText().toString(), stateSelector.getSelectedItem().toString(),
                 citySelector.getSelectedItem().toString(), pincode.getText().toString());*/
         }
-
-    private void isRegistered(boolean registrationState){registered = registrationState;}
-
-   /* private void validate(String user, String email, String pass, String mobileNo, String address,String state, String city, String pincode) {
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(new Callback<APITokenResult>() {
-            @Override
-            public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
-                final String token = response.body().getToken();
-                Call<RegisterResult> callRegister = Utils.getAPIInstance()
-                        .register(new RegistrationCredentials(user, email, pass, mobileNo, address, state, city, pincode),"Bearer " + token);
-                callRegister.enqueue(
-                        new Callback<RegisterResult>() {
-                            @Override
-                            public void onResponse(Call<RegisterResult> callRegister, Response<RegisterResult> response) {
-                                Log.v("CALL LOGIN RESPONSE : ","" + response.code() + response.message());
-                                if(response.body().getIsError().equals("N")){
-                                    Toast.makeText(getActivity(), "You are successfully registerd!",Toast.LENGTH_SHORT).show();
-                                    isRegistered(true);
-                                }
-                                else {
-                                    isRegistered(false);}
-                            }
-
-                            @Override
-                            public void onFailure(Call<RegisterResult> call, Throwable t) {
-                                Toast.makeText(getActivity(),"Register Failed : " + t.getMessage(),Toast.LENGTH_SHORT).show();
-                                isRegistered(false);
-                            }
-                        }
-                );
-            }
-
-            @Override
-            public void onFailure(Call<APITokenResult> call, Throwable t) {
-                Toast.makeText(getActivity(), "Call to KisaanOnline API Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }*/
-
-
-
-
 
 }

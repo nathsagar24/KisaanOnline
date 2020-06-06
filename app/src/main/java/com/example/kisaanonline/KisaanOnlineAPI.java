@@ -4,13 +4,18 @@ import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartDetailsResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
 import com.example.kisaanonline.ApiResults.CartListResult;
+import com.example.kisaanonline.ApiResults.CityListResult;
 import com.example.kisaanonline.ApiResults.LoginResult;
+import com.example.kisaanonline.ApiResults.MaxPriceResult;
+import com.example.kisaanonline.ApiResults.PincodeListResult;
 import com.example.kisaanonline.ApiResults.ProductListResult;
 import com.example.kisaanonline.ApiResults.RegisterResult;
+import com.example.kisaanonline.ApiResults.StateListResult;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.example.kisaanonline.Models.CityCredentials;
 import com.example.kisaanonline.Models.LoginCredentials;
+import com.example.kisaanonline.Models.PincodeCredentials;
 import com.example.kisaanonline.Models.ProductCredentials;
-import com.example.kisaanonline.Models.ProductListBody;
 import com.example.kisaanonline.Models.RegistrationCredentials;
 import com.example.kisaanonline.Models.SearchCredentials;
 
@@ -45,7 +50,7 @@ public interface KisaanOnlineAPI{
 
     @POST("services/get_product_list")
     Call<ProductListResult> getProductList(
-            @Body ProductListBody productListBody,
+            @Body SearchCredentials searchCredentials,
             @Header("Authorization") String token
     );
 
@@ -73,5 +78,29 @@ public interface KisaanOnlineAPI{
             @Header("Authorization") String token,
             @Header("user-id") String userId
     );
+
+    @POST("services/get_max_price")
+    Call<MaxPriceResult> getMaxPrice(
+            @Header("Authorization") String token
+    );
+
+    @POST("services/get_state_list")
+    Call<StateListResult> getStateList(
+            @Header("Authorization") String token
+    );
+
+    @POST("services/get_city_list")
+    Call<CityListResult> getCityList(
+            @Body CityCredentials cityCredentials,
+            @Header("Authorization") String token
+    );
+
+    @POST("services/get_pincode_list")
+    Call<PincodeListResult> getPincodeList(
+            @Body PincodeCredentials pincodeCredentials,
+            @Header("Authorization") String token
+    );
+
+
 
 }

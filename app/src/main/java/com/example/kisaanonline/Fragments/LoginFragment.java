@@ -71,8 +71,14 @@ public class LoginFragment extends Fragment {
     private void loginBtnClicked() {
 
         if(isValidInput(username.getText().toString(), password.getText().toString())){
-            Utils.refreshToken(getActivity());
-            checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
+            //Utils.refreshToken(getActivity());
+            Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                @Override
+                public void onTokenReceived() {
+                    checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
+                }
+            });
+            //checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
             //checkLoginCredentials1(username.getText().toString(), password.getText().toString());
         }
         else{

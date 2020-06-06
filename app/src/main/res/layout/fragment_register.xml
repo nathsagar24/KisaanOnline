@@ -12,33 +12,6 @@
     android:orientation="vertical"
     tools:context=".Fragments.RegisterFragment">
 
-    <!--<ImageView
-        android:paddingTop="15dp"
-        android:id="@+id/register_close_btn"
-        android:layout_width="@dimen/close_icon_dimension"
-        android:layout_height="@dimen/close_icon_dimension"
-        android:src="@mipmap/close_icon"
-        android:layout_gravity="end"
-        />-->
-
-    <!--<ImageView
-        android:paddingTop="15dp"
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:srcCompat="@mipmap/kisaanonlineicon" />
-
-    <TextView
-        android:paddingTop="15dp"
-        android:id="@+id/online_user"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Name :-"
-        android:textColor="@color/colorBlack"
-        android:textStyle="bold"
-        />-->
-
     <TextView
         android:paddingTop="15dp"
         android:layout_width="wrap_content"
@@ -183,7 +156,6 @@
         android:id="@+id/state_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/states"
         android:background="@drawable/rectangular_edittext"
         android:focusable="true"
         android:layout_marginTop="15dp"
@@ -204,7 +176,6 @@
         android:id="@+id/city_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/cities"
         android:background="@drawable/rectangular_edittext"
         android:focusable="true"
         android:layout_marginTop="15dp"
@@ -220,11 +191,10 @@
         android:layout_marginTop="15dp"
         />
 
-    <EditText
-        android:id="@+id/pincode"
+    <Spinner
+        android:id="@+id/pincode_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:background="@drawable/rectangular_edittext"
         android:focusable="true"
         android:layout_marginTop="15dp"

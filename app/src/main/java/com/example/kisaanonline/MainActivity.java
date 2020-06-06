@@ -34,6 +34,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//Don't refresh token without any reason if we find that there is no token or token has expired
+// we refresh the token on the main thread and then recall the method
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout cartListLayout,displayOptionsLayout;
@@ -230,7 +233,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
                 } else {
                     Utils.CART_LIST_VISIBILITY.setValue(View.VISIBLE);
-                    Utils.refreshToken(this);
+                   // Utils.refreshToken(this);
+                    /*Utils.refreshToken(this, new Utils.TokenReceivedListener() {
+                        @Override
+                        public void onTokenReceived() {
+                            populateCartList(Utils.token);
+                        }
+                    });*/
                     populateCartList(Utils.token);
                 }
             } else {
@@ -258,26 +267,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onBackPressed();
     }
 
-   /* private void populateCartList(){
-
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
-        callToken.enqueue(
-                new Callback<APITokenResult>() {
-                    @Override
-                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        final String token = response.body().getToken();
-                        populateCartList2(token);
-                    }
-
-                    @Override
-                    public void onFailure(Call<APITokenResult> call, Throwable t) {
-
-                    }
-                }
-        );
-
-    }*/
-
     private void populateCartList(String token){
         Call<CartListResult> callCartProducts = Utils.getAPIInstance().getCartList("Bearer " + token, Utils.userId);
         callCartProducts.enqueue(
@@ -287,8 +276,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(response.code() == 200) {
                             setCartListAdapter(response.body());
                         }
+                        else if (response.code() == 401){
+                            Utils.refreshToken(MainActivity.this, new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    populateCartList(token);
+                                }
+                            });
+                        }
                         else{
-                            Toast.makeText(MainActivity.this, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "API Call Succesful but Error: " + response.code(), Toast.LENGTH_SHORT).show();
                         }
                     }
                     @Override

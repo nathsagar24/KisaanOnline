@@ -81,9 +81,14 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     public void onClick(View view) {
                         if(!Utils.loggedIn) Utils.setFragment(context, new LoginFragment(), true);
                         else {
-                            Utils.refreshToken(context);
-                            addNewProductToCart(productListResult.getData().get(position).getProductId(),
-                                    productListResult.getData().get(position).getVariantId(), 1, Utils.token);
+                           // Utils.refreshToken(context);
+                            Utils.refreshToken(context, new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    addNewProductToCart(productListResult.getData().get(position).getProductId(),
+                                            productListResult.getData().get(position).getVariantId(), 1, Utils.token);
+                                }
+                            });
                         }
                         }
                     }

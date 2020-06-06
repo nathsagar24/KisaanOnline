@@ -2,13 +2,12 @@ package com.example.kisaanonline.Models;
 
 public class SearchCredentials {
     private String search_keyword;
-    private int min_price,max_price,start ;
+    private Integer limit, start;
 
-    public SearchCredentials(String search_keyword, int min_price, int max_price, int start) {
+    public SearchCredentials(String search_keyword, Integer start, Integer limit) {
         this.search_keyword = search_keyword;
-        this.min_price = min_price;
-        this.max_price = max_price;
         this.start = start;
+        this.limit = limit;
     }
 
     public String getSearch_keyword() {
@@ -19,27 +18,19 @@ public class SearchCredentials {
         this.search_keyword = search_keyword;
     }
 
-    public int getMin_price() {
-        return min_price;
-    }
-
-    public void setMin_price(int min_price) {
-        this.min_price = min_price;
-    }
-
-    public int getMax_price() {
-        return max_price;
-    }
-
-    public void setMax_price(int max_price) {
-        this.max_price = max_price;
-    }
-
     public int getStart() {
         return start;
     }
 
-    public void setStart(int start) {
+    public void setStart(Integer start) {
         this.start = start;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 }

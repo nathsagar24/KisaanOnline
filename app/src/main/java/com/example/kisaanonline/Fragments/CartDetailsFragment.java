@@ -45,7 +45,7 @@ public class CartDetailsFragment extends Fragment {
         //Setting Up Recycler View
         cartDetailsRecyclerView = v.findViewById(R.id.cart_product_details_recycler_view);
         cartDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Utils.refreshToken(getActivity());
+        //Utils.refreshToken(getActivity());
         getCartDetails(Utils.token);
         //Populating the data
         Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));

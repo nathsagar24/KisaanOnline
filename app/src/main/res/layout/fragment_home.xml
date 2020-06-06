@@ -54,7 +54,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:min_value="0"
-        app:max_value="4000"
         app:steps="1"
         app:bar_color="@color/colorOrange"
         app:bar_highlight_color="@color/colorOrange"
@@ -73,7 +72,6 @@
             android:id="@+id/price_range"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filter: Rs. 100 - Rs. 100"
             android:textColor="@color/colorBlack"
             />
         <Space
