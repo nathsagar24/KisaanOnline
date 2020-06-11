@@ -8,9 +8,9 @@ public class CartListResult {
     @SerializedName("data")
     private List<CartProduct> cartList;
     @SerializedName("totalprice")
-    private List<TotalPrice> totalPriceList;
+    private Integer totalPriceList;
 
-    public CartListResult(List<CartProduct> cartList, List<TotalPrice> totalPriceList) {
+    public CartListResult(List<CartProduct> cartList, Integer totalPriceList) {
         this.cartList = cartList;
         this.totalPriceList = totalPriceList;
     }
@@ -19,7 +19,7 @@ public class CartListResult {
         return cartList;
     }
 
-    public List<TotalPrice> getTotalPriceList() {
+    public Integer getTotalPrice() {
         return totalPriceList;
     }
 
@@ -32,18 +32,24 @@ public class CartListResult {
         private Integer quantity;
         @SerializedName("productprice")
         private float productPrice;
+        @SerializedName("discount_available")
+        private Integer discount;
         @SerializedName("productid")
         private String productId;
         @SerializedName("variantid")
         private String variantId;
+        @SerializedName("cart_id")
+        private String cartId;
 
-        public CartProduct(String productName, String imageUrl, int quantity, float productPrice, String productId, String variantId) {
+        public CartProduct(String productName, String imageUrl, int quantity, float productPrice, Integer discount, String productId, String variantId, String cartId) {
             this.productName = productName;
             this.imageUrl = imageUrl;
             this.quantity = quantity;
             this.productPrice = productPrice;
+            this.discount = discount;
             this.productId = productId;
             this.variantId = variantId;
+            this.cartId = cartId;
         }
 
         public String getProductName() {
@@ -69,18 +75,14 @@ public class CartListResult {
         public String getVariantId() {
             return variantId;
         }
-    }
 
-    public class TotalPrice{
-        @SerializedName("sum(price*quantity)")
-        private float totalPrice;
-
-        public TotalPrice(float totalPrice) {
-            this.totalPrice = totalPrice;
+        public Integer getDiscount() {
+            return discount;
         }
 
-        public float getTotalPrice() {
-            return totalPrice;
+        public String getCartId() {
+            return cartId;
         }
     }
+
 }

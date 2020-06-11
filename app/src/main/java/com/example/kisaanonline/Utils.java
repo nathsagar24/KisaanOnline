@@ -22,12 +22,16 @@ import com.example.kisaanonline.Fragments.HomeFragment;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
 import com.example.kisaanonline.Models.CityCredentials;
 import com.example.kisaanonline.Models.PincodeCredentials;
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -61,8 +65,10 @@ public class Utils {
     public static KisaanOnlineAPI getAPIInstance(){
         if(api == null) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);;
+            OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor)
+                                            .addNetworkInterceptor(new StethoInterceptor())
+                                            .build();
             Retrofit retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(okHttpClient)
@@ -129,6 +135,14 @@ public class Utils {
                             // citySelector.setSelection(0);
                             // Log.v("CITY: ", "" +citySelector.getItemAtPosition(0).toString());
                         }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(context, new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                   populatePincodeList(Utils.token, state, city, context, spinner);
+                                }
+                            });
+                        }
                         else{
                             Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
                         }
@@ -157,10 +171,15 @@ public class Utils {
                             }
                             ArrayAdapter<String> cityListAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, cityList);
                             spinner.setAdapter(cityListAdapter);
-                            cityListAdapter.notifyDataSetChanged();
-
-                            // citySelector.setSelection(0);
-                            // Log.v("CITY: ", "" +citySelector.getItemAtPosition(0).toString());
+                            //cityListAdapter.notifyDataSetChanged();
+                        }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(context, new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    populateCityList(Utils.token, state, context, spinner);
+                                }
+                            });
                         }
                         else{
                             Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
@@ -190,6 +209,14 @@ public class Utils {
                     spinner.setAdapter(stateListAdapter);
                     stateListAdapter.notifyDataSetChanged();
                     //stateSelector.setSelection(0);
+                }
+                else if (response.code() == 401 || response.code() == 500){
+                    Utils.refreshToken(context, new Utils.TokenReceivedListener() {
+                        @Override
+                        public void onTokenReceived() {
+                            populateStateList(Utils.token, context, spinner);
+                        }
+                    });
                 }
                 else{
                     Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();

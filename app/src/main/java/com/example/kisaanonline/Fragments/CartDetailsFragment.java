@@ -48,35 +48,12 @@ public class CartDetailsFragment extends Fragment {
         //Utils.refreshToken(getActivity());
         getCartDetails(Utils.token);
         //Populating the data
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
+       /* Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
         callToken.enqueue(
                 new Callback<APITokenResult>() {
                     @Override
                     public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
                         final String token = response.body().getToken();
-                       /* Call<CartDetailsResult> callCartDetails = Utils.getAPIInstance().getCartDetails("Bearer " + token, Utils.userId);
-                        callCartDetails.enqueue(
-                                new Callback<CartDetailsResult>() {
-                                    @Override
-                                    public void onResponse(Call<CartDetailsResult> call, Response<CartDetailsResult> response) {
-                                        if(response.code() == 200) {
-                                            Toast.makeText(getActivity(), "Successfully Fetched Cart Details Data", Toast.LENGTH_SHORT).show();
-                                            setCartDetailsAdapter(response.body());
-                                            subTotal.setText("Sub Total Rs. " + response.body().getTotalList().get(0).getSubTotal());
-                                            totalGst.setText("Total GST Rs. " + response.body().getTotalList().get(0).getTotalGstAmt());
-                                            netTotal.setText("Total Rs. " + response.body().getTotalList().get(0).getNetTotal());
-                                        }
-                                        else{
-                                            Toast.makeText(getActivity(), "Response Received but Error Occured : " + response.errorBody(),Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<CartDetailsResult> call, Throwable t) {
-                                        Toast.makeText(getActivity(), "Call to API for Cart Details Failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );*/
                     }
 
                     @Override
@@ -85,7 +62,7 @@ public class CartDetailsFragment extends Fragment {
                     }
                 }
         );
-
+*/
         checkoutBtn=v.findViewById(R.id.checkout_btn);
         checkoutBtn.setOnClickListener(
                 new View.OnClickListener() {
@@ -110,6 +87,14 @@ public class CartDetailsFragment extends Fragment {
                             subTotal.setText("Sub Total Rs. " + response.body().getTotalList().get(0).getSubTotal());
                             totalGst.setText("Total GST Rs. " + response.body().getTotalList().get(0).getTotalGstAmt());
                             netTotal.setText("Total Rs. " + response.body().getTotalList().get(0).getNetTotal());
+                        }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    getCartDetails(Utils.token);
+                                }
+                            });
                         }
                         else{
                             Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();

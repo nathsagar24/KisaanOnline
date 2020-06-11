@@ -72,13 +72,13 @@ public class LoginFragment extends Fragment {
 
         if(isValidInput(username.getText().toString(), password.getText().toString())){
             //Utils.refreshToken(getActivity());
-            Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+            /*Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
                 @Override
                 public void onTokenReceived() {
                     checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
                 }
-            });
-            //checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
+            });*/
+            checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
             //checkLoginCredentials1(username.getText().toString(), password.getText().toString());
         }
         else{
@@ -95,27 +95,6 @@ public class LoginFragment extends Fragment {
         return true;
     }
 
-  /*  private void checkLoginCredentials1(String user, String pass){
-        Call<APITokenResult> callToken = api.getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(new Callback<APITokenResult>() {
-            @Override
-            public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
-                if(response.code() == 200) {
-                    final String token = response.body().getToken();
-                    checkLoginCredentials2(user, pass, token);
-                }
-                else{
-                    Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<APITokenResult> call, Throwable t) {
-                Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }*/
-
     private void checkLoginCredentials(String user, String pass, String token) {
 
         Call<LoginResult> callLogin = Utils.getAPIInstance().loggedIn(new LoginCredentials(user,pass),"Bearer " + token);
@@ -126,7 +105,16 @@ public class LoginFragment extends Fragment {
                         if (response.code() == 200) {
                             if (response.body().getIsError().equals("N")) {
                                 setLoginState(response.body().getUserId(), true);
-                            } else {
+                            }
+                            else if (response.code() == 401 || response.code() == 500){
+                                Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                                    @Override
+                                    public void onTokenReceived() {
+                                        checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
+                                    }
+                                });
+                            }
+                            else {
                                 Toast.makeText(getActivity(), "Please give correct credentials! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
                                 setLoginState(null, false);
                             }

@@ -10,23 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.kisaanonline.ApiResults.CityListResult;
-import com.example.kisaanonline.ApiResults.PincodeListResult;
-import com.example.kisaanonline.ApiResults.StateListResult;
 import com.example.kisaanonline.ApiResults.RegisterResult;
-import com.example.kisaanonline.Models.CityCredentials;
-import com.example.kisaanonline.Models.PincodeCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Models.RegistrationCredentials;
 import com.example.kisaanonline.Utils;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,12 +54,7 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
                         Toast.makeText(getActivity(),"STATE SELECTED",Toast.LENGTH_SHORT).show();
-                        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
-                            @Override
-                            public void onTokenReceived() {
-                                Utils.populateCityList(Utils.token, stateSelector.getSelectedItem().toString(), getActivity(), citySelector);
-                            }
-                        });
+                        Utils.populateCityList(Utils.token, stateSelector.getSelectedItem().toString(), getActivity(), citySelector);
                     }
 
                     @Override
@@ -76,24 +63,19 @@ public class RegisterFragment extends Fragment {
                     }
                 }
         );
-        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
-            @Override
-            public void onTokenReceived() {
-                Utils.populateStateList(Utils.token, getActivity(), stateSelector);
-            }
-        });
+        Utils.populateStateList(Utils.token, getActivity(), stateSelector);
         //Setting Up city selector
         citySelector.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-                        Toast.makeText(getActivity(),"CITY SELECTED",Toast.LENGTH_SHORT).show();
-                        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                        Utils.populatePincodeList(Utils.token, stateSelector.getSelectedItem().toString(), citySelector.getSelectedItem().toString(), getActivity(), pincodeSelector);
+                        /*Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
                             @Override
                             public void onTokenReceived() {
                                 Utils.populatePincodeList(Utils.token, stateSelector.getSelectedItem().toString(), citySelector.getSelectedItem().toString(), getActivity(), pincodeSelector);
                             }
-                        });
+                        });*/
                     }
 
                     @Override
@@ -121,12 +103,13 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //Utils.refreshToken(getActivity());
-                        Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                        register(Utils.token);
+                       /* Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
                             @Override
                             public void onTokenReceived() {
                                 register(Utils.token);
                             }
-                        });
+                        });*/
 
                     }
                 }
@@ -138,9 +121,7 @@ public class RegisterFragment extends Fragment {
     private boolean areFieldsEmpty(){
         return TextUtils.isEmpty(name.getText().toString()) || TextUtils.isEmpty(email.getText().toString()) ||
                 TextUtils.isEmpty(mobileNo.getText().toString()) || TextUtils.isEmpty(password.getText().toString()) ||
-                TextUtils.isEmpty(confirmPassword.getText().toString()) || TextUtils.isEmpty(address.getText().toString())
-                //|| TextUtils.isEmpty(pincode.getText().toString())
-        ;
+                TextUtils.isEmpty(confirmPassword.getText().toString()) || TextUtils.isEmpty(address.getText().toString());
     }
 
     private boolean validRegistration(){
@@ -169,7 +150,16 @@ public class RegisterFragment extends Fragment {
                             if (response.body().getIsError().equals("N")) {
                                 //isRegistered(true);
                                 Utils.setFragment(getActivity(), new LoginFragment(), true);
-                            } else {
+                            }
+                            else if (response.code() == 401 || response.code() == 500){
+                                Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                                    @Override
+                                    public void onTokenReceived() {
+                                       register(Utils.token);
+                                    }
+                                });
+                            }
+                            else {
                                 Toast.makeText(getActivity(), "Please give valid credentials! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
                                 //isRegistered(false);
                             }

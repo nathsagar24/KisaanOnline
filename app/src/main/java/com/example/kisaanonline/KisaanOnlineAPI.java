@@ -4,7 +4,9 @@ import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartDetailsResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
 import com.example.kisaanonline.ApiResults.CartListResult;
+import com.example.kisaanonline.ApiResults.CheckoutResult;
 import com.example.kisaanonline.ApiResults.CityListResult;
+import com.example.kisaanonline.ApiResults.RemoveFromCartResult;
 import com.example.kisaanonline.ApiResults.LoginResult;
 import com.example.kisaanonline.ApiResults.MaxPriceResult;
 import com.example.kisaanonline.ApiResults.PincodeListResult;
@@ -21,10 +23,14 @@ import com.example.kisaanonline.Models.SearchCredentials;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface KisaanOnlineAPI{
 
@@ -101,6 +107,20 @@ public interface KisaanOnlineAPI{
             @Header("Authorization") String token
     );
 
+    @Multipart
+    @POST("services/checkout/save")
+    Call<CheckoutResult> uploadPaymentDetails(
+            @Header("Authorization") String token,
+            @Header("user-id") String userId,
+            @Part MultipartBody.Part userInfo,
+            @Part MultipartBody.Part paymentPic
+    );
 
+    @POST("services/cart/delete_from_cart/{cart_id}")
+    Call<RemoveFromCartResult> removeFromCart(
+            @Path("cart_id") String cartId,
+            @Header("Authorization") String token,
+            @Header("user-id") String userId
+    );
 
 }

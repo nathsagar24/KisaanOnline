@@ -1,5 +1,8 @@
 package com.example.kisaanonline;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -14,7 +17,9 @@ import com.example.kisaanonline.Fragments.ContactUsFragment;
 import com.example.kisaanonline.Fragments.HomeFragment;
 import com.example.kisaanonline.Fragments.LoginFragment;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
+import com.facebook.stetho.Stetho;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -44,7 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView homeOption,aboutOption,contactOption;
     private Button cartDetailsBtn;
     private RecyclerView cartListRecyclerView;
+    private RecyclerView.Adapter cartListAdapter;
     private TextView cartTotalPrice;
+    private static final int REQUEST_WRITE_PERMISSION = 786;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         Utils.setFragment(MainActivity.this,new HomeFragment(),false);
+
+        requestPermission();
+
+        Stetho.initializeWithDefaults(this);
 
     }
 
@@ -75,6 +86,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setListenersToUtils();
 
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            return;
+        }
+        Toast.makeText(this, "Require External Storage Write Permission", Toast.LENGTH_SHORT).show();
+        requestPermission();
+    }
+
+    private void requestPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
+        }
     }
 
     private void intialiseMenuButtons(){
@@ -233,13 +259,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
                 } else {
                     Utils.CART_LIST_VISIBILITY.setValue(View.VISIBLE);
-                   // Utils.refreshToken(this);
-                    /*Utils.refreshToken(this, new Utils.TokenReceivedListener() {
-                        @Override
-                        public void onTokenReceived() {
-                            populateCartList(Utils.token);
-                        }
-                    });*/
                     populateCartList(Utils.token);
                 }
             } else {
@@ -275,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(Call<CartListResult> call, Response<CartListResult> response) {
                         if(response.code() == 200) {
                             setCartListAdapter(response.body());
+                            cartTotalPrice.setText("" + response.body().getTotalPrice());
                         }
                         else if (response.code() == 401){
                             Utils.refreshToken(MainActivity.this, new Utils.TokenReceivedListener() {
@@ -297,7 +317,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setCartListAdapter(CartListResult cartListResult) {
-        cartListRecyclerView.setAdapter(new CartListAdapter(this, cartListResult));
+        cartListAdapter = new CartListAdapter(this, cartListResult);
+        cartListRecyclerView.setAdapter(cartListAdapter);
+
     }
 
     @Override

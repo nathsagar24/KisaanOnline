@@ -4,30 +4,46 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp"
+    android:padding="5dp"
     >
 
     <ImageView
         android:id="@+id/cart_product_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/cart_icon"/>
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/cart_icon"
+        />
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="100dp"
+        android:orientation="vertical"
+        android:layout_marginLeft="15dp"
+        >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
         <TextView
             android:id="@+id/cart_product_name_and_qty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:paddingTop="15dp"
+            android:paddingTop="5dp"
+            android:textSize="10dp"
             android:text="Product Name X Quantity"/>
+
+        <ImageView
+            android:id="@+id/remove_btn"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@mipmap/close_icon"
+            android:layout_alignParentEnd="true"
+        />
+    </RelativeLayout>
         <TextView
             android:id="@+id/cart_product_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp"
+            android:paddingTop="5dp"
             android:text="Cart Product Price"/>
     </LinearLayout>
 

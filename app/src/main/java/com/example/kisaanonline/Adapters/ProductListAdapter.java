@@ -81,65 +81,14 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     public void onClick(View view) {
                         if(!Utils.loggedIn) Utils.setFragment(context, new LoginFragment(), true);
                         else {
-                           // Utils.refreshToken(context);
-                            Utils.refreshToken(context, new Utils.TokenReceivedListener() {
-                                @Override
-                                public void onTokenReceived() {
-                                    addNewProductToCart(productListResult.getData().get(position).getProductId(),
+                            addNewProductToCart(productListResult.getData().get(position).getProductId(),
                                             productListResult.getData().get(position).getVariantId(), 1, Utils.token);
-                                }
-                            });
                         }
                         }
                     }
         );
 
     }
-
-    /*private void addNewProductToCart(String productId, String variantId,int qty) {
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive","efive123"));
-        callToken.enqueue(
-                new Callback<APITokenResult>() {
-                    @Override
-                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        String token = response.body().getToken();
-                        List<ProductCredentials> productCredentialsList =new ArrayList<>();
-                        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
-                        Call<CartSaveResult> callCartProductSaveResult = Utils.getAPIInstance().saveCartProduct(
-                                                                                productCredentialsList,
-                                                                                "Bearer " + token,
-                                                                                Utils.userId
-                                                                                );
-                        Log.v("User Id", Utils.userId);
-                        callCartProductSaveResult.enqueue(
-                                new Callback<CartSaveResult>() {
-                                    @Override
-                                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
-                                        Log.v("RESPONSE : ","" + response.errorBody());
-                                        if(response.body().getIsError().equals("N")){
-                                            Toast.makeText(context, "Product Added To Cart", Toast.LENGTH_SHORT).show();
-                                            Utils.setFragment(context, new CartDetailsFragment(), true);
-                                        }
-                                        else{
-                                            Toast.makeText(context, "Error Occured! Product Not Added...Try Again", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
-                                            Toast.makeText(context,"Add To Cart API Call Failed : " + t.getMessage(), Toast.LENGTH_SHORT);
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    public void onFailure(Call<APITokenResult> call, Throwable t) {
-
-                    }
-                }
-        );
-    }*/
 
     private void addNewProductToCart(String productId, String variantId,int qty, String token) {
         List<ProductCredentials> productCredentialsList =new ArrayList<>();
@@ -155,10 +104,18 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
                         if(response.code() == 200) {
                             if (response.body().getIsError().equals("N")) {
-                                Utils.setFragment(context, new CartDetailsFragment(), true);
+                                //Utils.setFragment(context, new CartDetailsFragment(), true);
                             } else {
                                 Toast.makeText(context, "Please give correct credentials!", Toast.LENGTH_SHORT).show();
                             }
+                        }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(context, new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    addNewProductToCart(productId, variantId, qty, Utils.token);
+                                }
+                            });
                         }
                         else{
                             Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();

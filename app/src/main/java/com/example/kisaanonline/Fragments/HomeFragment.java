@@ -85,18 +85,9 @@ public class HomeFragment extends Fragment {
                 }
         );
 
-
-
         //Setting Up Price Seekbar
         priceRange = v.findViewById(R.id.price_range);
         priceSeekBar = v.findViewById(R.id.price_seekbar);
-       /* Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
-            @Override
-            public void onTokenReceived() {
-                Log.v("MAX PRICE TOKEN 0 : ", "" + Utils.token);
-                setMaxprice(Utils.token);
-            }
-        });*/
         setMaxprice(Utils.token);
         setPriceSeekbarListener();
         return v;
@@ -134,7 +125,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MaxPriceResult> call, Throwable t) {
-                Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

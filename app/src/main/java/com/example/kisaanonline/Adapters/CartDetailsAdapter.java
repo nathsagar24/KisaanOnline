@@ -99,53 +99,6 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
         return cartDetailsResult.getDataList().size();
     }
 
-    /*private void saveProductToCart(String productId, String variantId, int qty){
-        Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
-        callToken.enqueue(
-                new Callback<APITokenResult>() {
-                    @Override
-                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        final String token = response.body().getToken();
-
-                        List<ProductCredentials> productCredentialsList = new ArrayList<>();
-                        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
-                        Call<CartSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
-                                                        productCredentialsList,
-                                                        "Bearer " + token,
-                                                        Utils.userId
-                                                        );
-                        callCartProductSave.enqueue(
-                                new Callback<CartSaveResult>() {
-                                    @Override
-                                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
-                                        if(response.code() == 200) {
-                                            if (response.body().getIsError().equals("N")) {
-                                                Toast.makeText(context, "Quantity Updated!!", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(context, "Quantity didn't get saved!! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                        else{
-                                            Toast.makeText(context, "Response Received but Error : " +response.errorBody(),Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
-                                        Toast.makeText(context, "API Call For Saving Cart Item Failed : " + t.getMessage(),Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    public void onFailure(Call<APITokenResult> call, Throwable t) {
-                        Toast.makeText(context, "API Call for getting token failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-    }*/
-
     private void saveProductToCart(String productId, String variantId, int qty, String token){
 
         List<ProductCredentials> productCredentialsList = new ArrayList<>();
