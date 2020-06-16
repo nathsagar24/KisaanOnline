@@ -64,7 +64,7 @@ public class LoginFragment extends Fragment {
 
     private void registerBtnClicked() {
 
-        Utils.setFragment(getActivity(), new RegisterFragment(), false);
+        Utils.setFragment(getActivity(), new RegisterFragment(), true);
 
     }
 
@@ -129,6 +129,10 @@ public class LoginFragment extends Fragment {
         if(Utils.loggedIn){
             Utils.userId = userId;
             Utils.setPrefs("userId", Utils.userId, getActivity());
+            Utils.toolbar.getMenu().findItem(R.id.action_logout).setVisible(true);
+            Utils.toolbar.getMenu().findItem(R.id.action_cart).setVisible(true);
+            Utils.toolbar.getMenu().findItem(R.id.action_hamburger).setVisible(true);
+            Utils.toolbar.getMenu().findItem(R.id.action_profile).setVisible(false);
             Utils.setFragment(getActivity(), new HomeFragment(), true);
         }
     }

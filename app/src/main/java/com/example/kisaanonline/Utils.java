@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -52,6 +53,7 @@ public class Utils {
             , HOME_OPTION_COLOR = new MutableLiveData<>(), ABOUT_OPTION_COLOR = new MutableLiveData<>(), CONTACT_OPTION_COLOR = new MutableLiveData<>();
     public static String token;
     public static CartDetailsResult checkoutCartDetails;
+    public static Toolbar toolbar;
 
 
     public static void setFragment(FragmentActivity parentActivity, Fragment newFragment, boolean addToBackStack){
@@ -89,12 +91,6 @@ public class Utils {
                 public void onResponse(Call<APITokenResult> callToken, Response<APITokenResult> response) {
                     if (response.code() == 200) {
                         final String token = response.body().getToken();
-                       /* final String expiryDateTimeString =response.body().getExpiry();
-                        try {
-                            Date expiryDateTime = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse(expiryDateTimeString);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }*/
                         refreshToken2(token,listener);
                     } else {
                         Toast.makeText(context, "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();

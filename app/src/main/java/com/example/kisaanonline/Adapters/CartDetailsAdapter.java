@@ -74,7 +74,7 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
         holder.total.setText("Rs. " + cartDetailsResult.getDataList().get(position).getTotal());
         holder.gstPercent.setText("" + cartDetailsResult.getDataList().get(position).getGstPercent() + " %");
         holder.gstAmt.setText("Rs. " + cartDetailsResult.getDataList().get(position).getGstAmt());
-        holder.qtyPicker.setMaxValue((int) cartDetailsResult.getDataList().get(position).getAvailableQty());
+        //holder.qtyPicker.setMaxValue((int) cartDetailsResult.getDataList().get(position).getAvailableQty());
         holder.qtyPicker.setMinValue(Math.min(1, (int) cartDetailsResult.getDataList().get(position).getAvailableQty()));
         holder.qtyPicker.setValue(cartDetailsResult.getDataList().get(position).getQty());
         holder.deleteBtn.setOnClickListener(
@@ -83,6 +83,9 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                     public void onClick(View view)
                     {
                         holder.itemView.setVisibility(View.GONE);
+                        Utils.checkoutCartDetails.getTotal().setSubTotal(Utils.checkoutCartDetails.getTotal().getSubTotal() - Utils.checkoutCartDetails.getDataList().get(position).getTotal());
+                        Utils.checkoutCartDetails.getTotal().setTotalGstAmt(Utils.checkoutCartDetails.getTotal().getTotalGstAmt() - Utils.checkoutCartDetails.getDataList().get(position).getGstAmt());
+                        Utils.checkoutCartDetails.getTotal().setNetTotal(Utils.checkoutCartDetails.getTotal().getNetTotal() - Utils.checkoutCartDetails.getDataList().get(position).getTotal());
                         Utils.checkoutCartDetails.getDataList().remove(position);
                     }
                 }
@@ -107,39 +110,5 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
     public int getItemCount() {
         return cartDetailsResult.getDataList().size();
     }
-
-    /*private void saveProductToCart(String productId, String variantId, int qty, String token){
-
-        List<ProductCredentials> productCredentialsList = new ArrayList<>();
-        productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
-        Call<CartSaveResult> callCartProductSave = Utils.getAPIInstance().saveCartProduct(
-                productCredentialsList,
-                "Bearer " + token,
-                Utils.userId
-        );
-        callCartProductSave.enqueue(
-                new Callback<CartSaveResult>() {
-                    @Override
-                    public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
-                        if(response.code() == 200) {
-                            if (response.body().getIsError().equals("N")) {
-                                Toast.makeText(context, "Quantity Updated!!", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(context, "Please give correct credentials! : " + response.body().getErrorString(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        else{
-                            Toast.makeText(context, "API Call Succesful but Error: " +response.errorBody(),Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<CartSaveResult> call, Throwable t) {
-                        Toast.makeText(context, "API Call Failed: " + t.getMessage(),Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-    }*/
 
 }

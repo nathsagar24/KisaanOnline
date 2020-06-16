@@ -71,12 +71,6 @@ public class PaymentDetails extends Fragment {
         String checkoutDetailsJsonString = createCheckoutDetailsJsonString();
         Log.v("CHECKOUT DETAILS", "" + checkoutDetailsJsonString);
 
-        /*//Getting Billing Details
-        Bundle bundle = getArguments();
-        UserCredentials userCredentials = bundle.getParcelable("userInfo");
-        Gson gson =new Gson();
-        String userInfoJsonString = gson.toJson(userCredentials);*/
-
         //Get User Info Json File
         File path = getActivity().getExternalFilesDir(null);
         checkoutDetailsFile = getCheckoutDetailsFile(checkoutDetailsJsonString, path);

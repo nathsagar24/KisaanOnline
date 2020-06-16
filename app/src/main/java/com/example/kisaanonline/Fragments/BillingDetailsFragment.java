@@ -17,9 +17,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kisaanonline.ApiResults.UserDetailResult;
 import com.example.kisaanonline.Models.UserCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.kisaanonline.Utils.populateCityList;
 
@@ -96,19 +103,50 @@ public class BillingDetailsFragment extends Fragment {
                             Toast.makeText(getActivity(),"Please fill valid credentials", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            UserCredentials userCredentials = new UserCredentials(userName.getText().toString(), email.getText().toString(), phone.getText().toString(),
-                                    address.getText().toString(), stateSelector.getSelectedItem().toString(), citySelector.getSelectedItem().toString(),
-                                    pincodeSelector.getSelectedItem().toString());
-                            Bundle userInfo = new Bundle();
-                            userInfo.putParcelable("userInfo", userCredentials);
-                            PaymentDetails paymentDetailsFragment = new PaymentDetails();
-                            paymentDetailsFragment.setArguments(userInfo);
-                            Utils.setFragment(getActivity(), paymentDetailsFragment, true);
+                            Utils.setFragment(getActivity(), new PaymentDetails(), true);
                         }
                         }
                 }
         );
+
+        setBillingDetails(Utils.token, Utils.userId);
+
         return v;
+    }
+
+    private void setBillingDetails(String token, String userId){
+        Call<UserDetailResult> callUserDetail = Utils.getAPIInstance().getUserDetail("Bearer " + token, userId);
+        callUserDetail.enqueue(
+                new Callback<UserDetailResult>() {
+                    @Override
+                    public void onResponse(Call<UserDetailResult> call, Response<UserDetailResult> response) {
+                        List<UserDetailResult.User> userDetailList = response.body().getUserDetail();
+                        if(response.code() == 200) {
+                            userName.setText(userDetailList.get(0).getName());
+                            phone.setText(userDetailList.get(0).getContact());
+                            email.setText(userDetailList.get(0).getEmail());
+                            address.setText(userDetailList.get(0).getAddress());
+                            //Set state, city and pincode
+                        }
+                        else if (response.code() == 401 || response.code() == 500){
+                            Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
+                                @Override
+                                public void onTokenReceived() {
+                                    setBillingDetails(Utils.token, Utils.userId);
+                                }
+                            });
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "API Call Succesful but Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserDetailResult> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private boolean areFieldsEmpty(){

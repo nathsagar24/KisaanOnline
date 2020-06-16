@@ -13,6 +13,7 @@ import com.example.kisaanonline.ApiResults.PincodeListResult;
 import com.example.kisaanonline.ApiResults.ProductListResult;
 import com.example.kisaanonline.ApiResults.RegisterResult;
 import com.example.kisaanonline.ApiResults.StateListResult;
+import com.example.kisaanonline.ApiResults.UserDetailResult;
 import com.example.kisaanonline.Models.AuthenticationCredentials;
 import com.example.kisaanonline.Models.CityCredentials;
 import com.example.kisaanonline.Models.LoginCredentials;
@@ -123,5 +124,10 @@ public interface KisaanOnlineAPI{
             @Header("user-id") String userId
     );
 
+    @POST("services/user/get_user_detail")
+    Call<UserDetailResult> getUserDetail(
+            @Header("Authorization") String token,
+            @Header("userid") String userId
+    );
 
 }

@@ -3,7 +3,7 @@ package com.example.kisaanonline.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class UserCredentials implements Parcelable {
+public class UserCredentials {
     private String username,email,contact,address,state,city,pincode;
 
     public UserCredentials(String username, String email, String contact, String address, String state, String city, String pincode) {
@@ -25,18 +25,6 @@ public class UserCredentials implements Parcelable {
         city = in.readString();
         pincode = in.readString();
     }
-
-    public static final Creator<UserCredentials> CREATOR = new Creator<UserCredentials>() {
-        @Override
-        public UserCredentials createFromParcel(Parcel in) {
-            return new UserCredentials(in);
-        }
-
-        @Override
-        public UserCredentials[] newArray(int size) {
-            return new UserCredentials[size];
-        }
-    };
 
     public String getUsername() {
         return username;
@@ -92,21 +80,5 @@ public class UserCredentials implements Parcelable {
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(username);
-        parcel.writeString(email);
-        parcel.writeString(contact);
-        parcel.writeString(address);
-        parcel.writeString(state);
-        parcel.writeString(city);
-        parcel.writeString(pincode);
     }
 }

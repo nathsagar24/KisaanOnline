@@ -56,12 +56,6 @@ public class HomeFragment extends Fragment {
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
         productListLayoutManager = new LinearLayoutManager(getActivity());
         productListRecyclerView.setLayoutManager(productListLayoutManager);
-       /* Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
-            @Override
-            public void onTokenReceived() {
-                getProductList(Utils.token);
-            }
-        });*/
         getProductList(Utils.token);
 
         //Setting Up Search
@@ -101,31 +95,6 @@ public class HomeFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
-
-    /*@Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
-        Toast.makeText(getActivity(),"Options Menu Created", Toast.LENGTH_SHORT).show();
-        if(Utils.loggedIn){
-            Toast.makeText(getActivity(),"Options Menu Created Logged In", Toast.LENGTH_SHORT).show();
-            inflater.inflate(R.menu.menu_logged_in, menu);
-        }
-        else{
-            Toast.makeText(getActivity(),"Options Menu Created Logged Out", Toast.LENGTH_SHORT).show();
-            inflater.inflate(R.menu.menu_logged_out, menu);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }*/
-
-    /*@Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }*/
 
     private void hideSoftKeyboard(Activity activity, IBinder windowToken){
 
@@ -250,12 +219,12 @@ public class HomeFragment extends Fragment {
         productListAdapter = new ProductListAdapter(getActivity(), productList);
         productListRecyclerView.setAdapter( productListAdapter );
         productListAdapter.notifyDataSetChanged();
-        /*(new Handler()).postDelayed(new Runnable() {
+        (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 getProductList(Utils.token);
             }
-        }, 3000);*/
+        }, 3000);
     }
 
 }

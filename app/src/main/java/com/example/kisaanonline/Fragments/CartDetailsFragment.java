@@ -23,6 +23,7 @@ import com.example.kisaanonline.Utils;
 
 import java.util.List;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,7 +48,6 @@ public class CartDetailsFragment extends Fragment {
         //Setting Up Recycler View
         cartDetailsRecyclerView = v.findViewById(R.id.cart_product_details_recycler_view);
         cartDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //Utils.refreshToken(getActivity());
         getCartDetails(Utils.token);
         checkoutBtn=v.findViewById(R.id.checkout_btn);
         checkoutBtn.setOnClickListener(
@@ -71,9 +71,6 @@ public class CartDetailsFragment extends Fragment {
                     public void onResponse(Call<CartDetailsResult> call, Response<CartDetailsResult> response) {
                         if(response.code() == 200) {
                             setCartDetailsAdapter(response.body());
-                            subTotal.setText("Sub Total Rs. " + response.body().getTotal().getSubTotal());
-                            totalGst.setText("Total GST Rs. " + response.body().getTotal().getTotalGstAmt());
-                            netTotal.setText("Total Rs. " + response.body().getTotal().getNetTotal());
                         }
                         else if (response.code() == 401 || response.code() == 500){
                             Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
@@ -97,17 +94,21 @@ public class CartDetailsFragment extends Fragment {
     }
 
     private void setCartDetailsAdapter(CartDetailsResult data){
+        subTotal.setText("Sub Total Rs. " + data.getTotal().getSubTotal());
+        totalGst.setText("Total GST Rs. " + data.getTotal().getTotalGstAmt());
+        netTotal.setText("Total Rs. " + data.getTotal().getNetTotal());
         cartDetailsAdapter = new CartDetailsAdapter(getActivity(), data);
         cartDetailsRecyclerView.setAdapter(cartDetailsAdapter);
         cartDetailsAdapter.notifyDataSetChanged();
-       /* (new Handler()).postDelayed(
+        (new Handler()).postDelayed(
                 new Runnable() {
                     @Override
                     public void run() {
-                        getCartDetails(Utils.token);
+                        //getCartDetails(Utils.token);
+                        setCartDetailsAdapter(Utils.checkoutCartDetails);
                     }
                 }, 3000
-        );*/
+        );
     }
 
 }

@@ -106,7 +106,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
                         if(response.code() == 200) {
                             if (response.body().getIsError().equals("N")) {
-                                Utils.setFragment(context, new CartDetailsFragment(), true);
+                                Toast.makeText(context, "Product Added Succesfully", Toast.LENGTH_SHORT).show();
+                                //Utils.setFragment(context, new CartDetailsFragment(), true);
                             } else {
                                 Toast.makeText(context, "Please give correct credentials!", Toast.LENGTH_SHORT).show();
                             }

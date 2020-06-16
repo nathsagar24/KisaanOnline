@@ -40,9 +40,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//Don't refresh token without any reason if we find that there is no token or token has expired
-// we refresh the token on the main thread and then recall the method
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout cartListLayout,displayOptionsLayout;
@@ -62,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Utils.toolbar = toolbar;
+
         if(Utils.getPrefs("userId", this) != null){
             Utils.userId = Utils.getPrefs("userId", this);
             Utils.loggedIn = true;
@@ -78,8 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(Utils.loggedIn)getMenuInflater().inflate(R.menu.menu_logged_in, menu);
-        else getMenuInflater().inflate(R.menu.menu_logged_out, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
 
         //Initialising Menu Items
         cartMenuItem = menu.findItem(R.id.action_cart);
@@ -282,6 +280,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Logout Button Clicked", Toast.LENGTH_SHORT).show();
             Utils.loggedIn = false;
             Utils.userId = null;
+            Utils.toolbar.getMenu().findItem(R.id.action_logout).setVisible(false);
+            Utils.toolbar.getMenu().findItem(R.id.action_cart).setVisible(false);
+            Utils.toolbar.getMenu().findItem(R.id.action_hamburger).setVisible(true);
+            Utils.toolbar.getMenu().findItem(R.id.action_profile).setVisible(true);
             Utils.setFragment(this,new HomeFragment(),false);
         }
         else if(id == R.id.action_hamburger){
@@ -295,8 +297,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         Utils.CART_LIST_VISIBILITY.setValue(View.GONE);
         Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
-        /*Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.display_fragment);
-        if(fragment instanceof  HomeFragment)finish();*/
         super.onBackPressed();
     }
 
@@ -334,12 +334,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cartListAdapter = new CartListAdapter(this, cartListResult);
         cartListRecyclerView.setAdapter(cartListAdapter);
         cartListAdapter.notifyDataSetChanged();
-        /*(new Handler()).postDelayed(new Runnable() {
+        (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 populateCartList(Utils.token);
             }
-        }, 3000);*/
+        }, 3000);
     }
 
     @Override

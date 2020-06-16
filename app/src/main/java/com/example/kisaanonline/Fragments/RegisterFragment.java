@@ -176,9 +176,6 @@ public class RegisterFragment extends Fragment {
                     }
                 }
         );
-        /*validate(name.getText().toString(), email.getText().toString(), password.getText().toString(),
-                mobileNo.getText().toString(), address.getText().toString(), stateSelector.getSelectedItem().toString(),
-                citySelector.getSelectedItem().toString(), pincode.getText().toString());*/
         }
 
 }
