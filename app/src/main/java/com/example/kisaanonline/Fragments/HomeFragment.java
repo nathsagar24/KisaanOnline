@@ -3,12 +3,18 @@ package com.example.kisaanonline.Fragments;
 import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -25,6 +31,7 @@ import com.example.kisaanonline.R;
 import com.example.kisaanonline.Models.SearchCredentials;
 import com.example.kisaanonline.Utils;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,12 +45,13 @@ public class HomeFragment extends Fragment {
     private RecyclerView productListRecyclerView;
     private RecyclerView.LayoutManager productListLayoutManager;
     private SearchView searchView;
+    private RecyclerView.Adapter productListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home,container,false);
-
+        //setHasOptionsMenu(true);
         //Setting Up Product List
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
         productListLayoutManager = new LinearLayoutManager(getActivity());
@@ -92,6 +100,32 @@ public class HomeFragment extends Fragment {
         setPriceSeekbarListener();
         return v;
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    /*@Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        Toast.makeText(getActivity(),"Options Menu Created", Toast.LENGTH_SHORT).show();
+        if(Utils.loggedIn){
+            Toast.makeText(getActivity(),"Options Menu Created Logged In", Toast.LENGTH_SHORT).show();
+            inflater.inflate(R.menu.menu_logged_in, menu);
+        }
+        else{
+            Toast.makeText(getActivity(),"Options Menu Created Logged Out", Toast.LENGTH_SHORT).show();
+            inflater.inflate(R.menu.menu_logged_out, menu);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }*/
+
+    /*@Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }*/
 
     private void hideSoftKeyboard(Activity activity, IBinder windowToken){
 
@@ -213,7 +247,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void setProductListAdapter(ProductListResult productList) {
-    productListRecyclerView.setAdapter( new ProductListAdapter(getActivity(), productList) );
+        productListAdapter = new ProductListAdapter(getActivity(), productList);
+        productListRecyclerView.setAdapter( productListAdapter );
+        productListAdapter.notifyDataSetChanged();
+        /*(new Handler()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getProductList(Utils.token);
+            }
+        }, 3000);*/
     }
 
 }

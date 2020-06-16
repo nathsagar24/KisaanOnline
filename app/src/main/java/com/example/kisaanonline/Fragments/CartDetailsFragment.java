@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class CartDetailsFragment extends Fragment {
     private Button checkoutBtn;
    private RecyclerView cartDetailsRecyclerView;
    private TextView subTotal, totalGst, netTotal;
+   private RecyclerView.Adapter cartDetailsAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,27 +49,12 @@ public class CartDetailsFragment extends Fragment {
         cartDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //Utils.refreshToken(getActivity());
         getCartDetails(Utils.token);
-        //Populating the data
-       /* Call<APITokenResult> callToken = Utils.getAPIInstance().getToken(new AuthenticationCredentials("efive", "efive123"));
-        callToken.enqueue(
-                new Callback<APITokenResult>() {
-                    @Override
-                    public void onResponse(Call<APITokenResult> call, Response<APITokenResult> response) {
-                        final String token = response.body().getToken();
-                    }
-
-                    @Override
-                    public void onFailure(Call<APITokenResult> call, Throwable t) {
-                        Toast.makeText(getActivity(), "Call to API for token failed : " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-*/
         checkoutBtn=v.findViewById(R.id.checkout_btn);
         checkoutBtn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         Utils.setFragment(getActivity(),new BillingDetailsFragment(),true);
                     }
                 }
@@ -84,9 +71,9 @@ public class CartDetailsFragment extends Fragment {
                     public void onResponse(Call<CartDetailsResult> call, Response<CartDetailsResult> response) {
                         if(response.code() == 200) {
                             setCartDetailsAdapter(response.body());
-                            subTotal.setText("Sub Total Rs. " + response.body().getTotalList().get(0).getSubTotal());
-                            totalGst.setText("Total GST Rs. " + response.body().getTotalList().get(0).getTotalGstAmt());
-                            netTotal.setText("Total Rs. " + response.body().getTotalList().get(0).getNetTotal());
+                            subTotal.setText("Sub Total Rs. " + response.body().getTotal().getSubTotal());
+                            totalGst.setText("Total GST Rs. " + response.body().getTotal().getTotalGstAmt());
+                            netTotal.setText("Total Rs. " + response.body().getTotal().getNetTotal());
                         }
                         else if (response.code() == 401 || response.code() == 500){
                             Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
@@ -110,7 +97,17 @@ public class CartDetailsFragment extends Fragment {
     }
 
     private void setCartDetailsAdapter(CartDetailsResult data){
-        cartDetailsRecyclerView.setAdapter(new CartDetailsAdapter(getActivity(), data));
+        cartDetailsAdapter = new CartDetailsAdapter(getActivity(), data);
+        cartDetailsRecyclerView.setAdapter(cartDetailsAdapter);
+        cartDetailsAdapter.notifyDataSetChanged();
+       /* (new Handler()).postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getCartDetails(Utils.token);
+                    }
+                }, 3000
+        );*/
     }
 
 }

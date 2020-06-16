@@ -59,7 +59,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
             Glide
                     .with(context)
                     .load(cartListResult.getCartList().get(position).getImageUrl())
-                    .placeholder(R.drawable.ic_menu_camera)
+                    .placeholder(R.mipmap.image_loading)
                     .into(holder.productImage);
         holder.removeBtn.setOnClickListener(
                 new View.OnClickListener() {

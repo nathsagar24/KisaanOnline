@@ -9,7 +9,7 @@
         android:checkable="true"
         android:checked="false"
         app:showAsAction="always"
-        android:visible="false"
+        android:visible="true"
         />
     <item
         android:id="@+id/action_logout"
@@ -17,7 +17,7 @@
         android:title="Logout"
         android:icon="@mipmap/logout_icon"
         app:showAsAction="always"
-        android:visible="false"
+        android:visible="true"
         />
     <item
         android:id="@+id/action_profile"
@@ -25,7 +25,7 @@
         android:title="@string/action_profile"
         android:icon="@mipmap/profile_icon"
         app:showAsAction="always"
-        android:visible="true"
+        android:visible="false"
         />
     <item
         android:id="@+id/action_hamburger"

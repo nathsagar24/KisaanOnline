@@ -2,6 +2,7 @@ package com.example.kisaanonline;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.session.MediaSession;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -15,6 +16,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.kisaanonline.ApiResults.APITokenResult;
+import com.example.kisaanonline.ApiResults.CartDetailsResult;
 import com.example.kisaanonline.ApiResults.CityListResult;
 import com.example.kisaanonline.ApiResults.PincodeListResult;
 import com.example.kisaanonline.ApiResults.StateListResult;
@@ -49,6 +51,7 @@ public class Utils {
     public static MutableLiveData<Integer> CART_LIST_VISIBILITY = new MutableLiveData<>(), DISPLAY_OPTIONS_VISIBILITY = new MutableLiveData<>()
             , HOME_OPTION_COLOR = new MutableLiveData<>(), ABOUT_OPTION_COLOR = new MutableLiveData<>(), CONTACT_OPTION_COLOR = new MutableLiveData<>();
     public static String token;
+    public static CartDetailsResult checkoutCartDetails;
 
 
     public static void setFragment(FragmentActivity parentActivity, Fragment newFragment, boolean addToBackStack){
@@ -228,6 +231,18 @@ public class Utils {
                 Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public static String getPrefs(String key, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(key, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, null);
+    }
+
+    public static void setPrefs(String key, String value, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("userId",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key,value );
+        editor.commit();
     }
 
 

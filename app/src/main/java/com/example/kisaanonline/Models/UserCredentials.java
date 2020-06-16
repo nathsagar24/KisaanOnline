@@ -16,6 +16,28 @@ public class UserCredentials implements Parcelable {
         this.pincode = pincode;
     }
 
+    protected UserCredentials(Parcel in) {
+        username = in.readString();
+        email = in.readString();
+        contact = in.readString();
+        address = in.readString();
+        state = in.readString();
+        city = in.readString();
+        pincode = in.readString();
+    }
+
+    public static final Creator<UserCredentials> CREATOR = new Creator<UserCredentials>() {
+        @Override
+        public UserCredentials createFromParcel(Parcel in) {
+            return new UserCredentials(in);
+        }
+
+        @Override
+        public UserCredentials[] newArray(int size) {
+            return new UserCredentials[size];
+        }
+    };
+
     public String getUsername() {
         return username;
     }
@@ -79,6 +101,12 @@ public class UserCredentials implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-
+        parcel.writeString(username);
+        parcel.writeString(email);
+        parcel.writeString(contact);
+        parcel.writeString(address);
+        parcel.writeString(state);
+        parcel.writeString(city);
+        parcel.writeString(pincode);
     }
 }

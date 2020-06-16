@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,21 +38,24 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
     public CartDetailsAdapter(FragmentActivity context, CartDetailsResult cartDetailsResult) {
         this.context = context;
         this.cartDetailsResult = cartDetailsResult;
+        Utils.checkoutCartDetails = cartDetailsResult;
     }
 
     public class CartDetailsViewHolder extends RecyclerView.ViewHolder {
-        private TextView productName,price,total, gstPercent,gstAmt;
-        private ImageView productImage;
+        private TextView productName,price,total, gstPercent, gstAmt, dicount;
+        private ImageView productImage, deleteBtn;
         private NumberPicker qtyPicker;
         public CartDetailsViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.product_name);
             price = itemView.findViewById(R.id.product_price);
+            dicount = itemView.findViewById(R.id.discount);
             total = itemView.findViewById(R.id.total_product_price);
             gstPercent = itemView.findViewById(R.id.gst_percent);
             gstAmt =itemView.findViewById(R.id.gst_amt);
             productImage = itemView.findViewById(R.id.product_image);
             qtyPicker = itemView.findViewById(R.id.quantity_picker);
+            deleteBtn = itemView.findViewById(R.id.delete_btn);
         }
     }
 
@@ -66,31 +70,36 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
     public void onBindViewHolder(@NonNull CartDetailsViewHolder holder, int position) {
         holder.productName.setText(cartDetailsResult.getDataList().get(position).getProductName());
         holder.price.setText("Rs. " + cartDetailsResult.getDataList().get(position).getPrice());
+        holder.dicount.setText("Rs. " + cartDetailsResult.getDataList().get(position).getDiscount());
         holder.total.setText("Rs. " + cartDetailsResult.getDataList().get(position).getTotal());
         holder.gstPercent.setText("" + cartDetailsResult.getDataList().get(position).getGstPercent() + " %");
         holder.gstAmt.setText("Rs. " + cartDetailsResult.getDataList().get(position).getGstAmt());
         holder.qtyPicker.setMaxValue((int) cartDetailsResult.getDataList().get(position).getAvailableQty());
         holder.qtyPicker.setMinValue(Math.min(1, (int) cartDetailsResult.getDataList().get(position).getAvailableQty()));
         holder.qtyPicker.setValue(cartDetailsResult.getDataList().get(position).getQty());
+        holder.deleteBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        holder.itemView.setVisibility(View.GONE);
+                        Utils.checkoutCartDetails.getDataList().remove(position);
+                    }
+                }
+        );
+
         holder.qtyPicker.setOnValueChangedListener(
                 new NumberPicker.OnValueChangeListener() {
                     @Override
                     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                       // Utils.refreshToken(context);
-                        Utils.refreshToken(context, new Utils.TokenReceivedListener() {
-                            @Override
-                            public void onTokenReceived() {
-                                saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal, Utils.token);
-                            }
-                        });
-                        //saveProductToCart(cartDetailsResult.getDataList().get(position).getProductId(), cartDetailsResult.getDataList().get(position).getVariantId(),newVal, Utils.token);
+                        Utils.checkoutCartDetails.getDataList().get(position).setQty(newVal);
                     }
                 }
         );
             Glide
                     .with(context)
                     .load(cartDetailsResult.getDataList().get(position).getImageUrl())
-                    .placeholder(R.drawable.ic_menu_camera)
+                    .placeholder(R.mipmap.image_loading)
                     .into(holder.productImage);
     }
 
@@ -99,7 +108,7 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
         return cartDetailsResult.getDataList().size();
     }
 
-    private void saveProductToCart(String productId, String variantId, int qty, String token){
+    /*private void saveProductToCart(String productId, String variantId, int qty, String token){
 
         List<ProductCredentials> productCredentialsList = new ArrayList<>();
         productCredentialsList.add(new ProductCredentials(productId, variantId, qty));
@@ -131,6 +140,6 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                 }
         );
 
-    }
+    }*/
 
 }

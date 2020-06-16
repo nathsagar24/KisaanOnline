@@ -6,19 +6,23 @@
     android:layout_height="wrap_content"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:logo="@mipmap/kisaanonlineicon"
+        />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:elevation="1dp"
+        android:layout_below="@+id/toolbar"
+        >
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:logo="@mipmap/kisaanonlineicon"
-            />
             <!--Hamburger Icon Options-->
             <LinearLayout
                 android:id="@+id/display_options_layout"
@@ -111,7 +115,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
-        android:layout_below="@+id/app_bar"
+        android:layout_below="@+id/toolbar"
         android:id="@+id/display_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

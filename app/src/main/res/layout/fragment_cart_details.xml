@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,63 +19,76 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/cart_details"
+        android:textStyle="bold"
         android:textColor="@color/colorBlack"
-        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
         />
 
-    <LinearLayout android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@color/colorGreen"
-       >
+        android:orientation="horizontal"
+        >
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="Product"
             android:textColor="@color/colorPrimary"
-            android:paddingLeft="15dp"
+            android:textSize="10dp"
             />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="Quantity"
             android:textColor="@color/colorPrimary"
-            android:paddingLeft="15dp"
+            android:textSize="10dp"
             />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="Price"
-            android:textColor="@color/colorPrimary"
-            android:paddingLeft="15dp"
-            />
+            android:textSize="10dp"
+            android:textColor="@color/colorPrimary" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:text="Discount"
+            android:textSize="10dp"
+            android:textColor="@color/colorPrimary" />
+
+
+        <TextView
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="Total"
-            android:textColor="@color/colorPrimary"
-            android:paddingLeft="15dp"
-            />
+            android:textSize="10dp"
+            android:textColor="@color/colorPrimary" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="GST \n %"
-            android:textColor="@color/colorPrimary"
-            android:paddingLeft="15dp"
-            />
+            android:textSize="10dp"
+            android:textColor="@color/colorPrimary" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="GST \n Amt."
-            android:textColor="@color/colorPrimary"
-            android:paddingLeft="15dp"
-            />
+            android:textSize="10dp"
+            android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
 
@@ -82,7 +96,7 @@
         android:id="@+id/cart_product_details_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"/>
+        />
 
     <TextView
         android:id="@+id/sub_total"

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -45,7 +46,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout cartListLayout,displayOptionsLayout;
-    private MenuItem cartMenuItem, hamburgerMenuItem, profileMenuItem;
+    private MenuItem cartMenuItem, hamburgerMenuItem, profileMenuItem, logoutMenuItem;
     private TextView homeOption,aboutOption,contactOption;
     private Button cartDetailsBtn;
     private RecyclerView cartListRecyclerView;
@@ -61,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if(Utils.getPrefs("userId", this) != null){
+            Utils.userId = Utils.getPrefs("userId", this);
+            Utils.loggedIn = true;
+        }
 
         Utils.setFragment(MainActivity.this,new HomeFragment(),false);
 
@@ -73,12 +78,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.main, menu);
+        if(Utils.loggedIn)getMenuInflater().inflate(R.menu.menu_logged_in, menu);
+        else getMenuInflater().inflate(R.menu.menu_logged_out, menu);
 
         //Initialising Menu Items
         cartMenuItem = menu.findItem(R.id.action_cart);
         hamburgerMenuItem = menu.findItem(R.id.action_hamburger);
         profileMenuItem = menu.findItem(R.id.action_profile);
+        logoutMenuItem = menu.findItem(R.id.action_logout);
+
 
         intialiseMenuButtons();
 
@@ -270,6 +278,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
             Utils.setFragment(this,new LoginFragment(),true);
         }
+        else if (id == R.id.action_logout){
+            Toast.makeText(this, "Logout Button Clicked", Toast.LENGTH_SHORT).show();
+            Utils.loggedIn = false;
+            Utils.userId = null;
+            Utils.setFragment(this,new HomeFragment(),false);
+        }
         else if(id == R.id.action_hamburger){
             if(hamburgerMenuItem.isChecked()) Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
             else Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.VISIBLE);
@@ -319,7 +333,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setCartListAdapter(CartListResult cartListResult) {
         cartListAdapter = new CartListAdapter(this, cartListResult);
         cartListRecyclerView.setAdapter(cartListAdapter);
-
+        cartListAdapter.notifyDataSetChanged();
+        /*(new Handler()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                populateCartList(Utils.token);
+            }
+        }, 3000);*/
     }
 
     @Override

@@ -12,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
 import com.example.kisaanonline.ApiResults.ProductListResult;
@@ -65,7 +67,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             Glide
                     .with(context)
                     .load(productListResult.getData().get(position).getImageUrl())
-                    .placeholder(R.drawable.ic_menu_camera)
+                    .placeholder(R.mipmap.image_loading)
                     .into(holder.productImage);
             holder.productImage.setOnClickListener(
                     new View.OnClickListener() {
@@ -104,7 +106,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     public void onResponse(Call<CartSaveResult> call, Response<CartSaveResult> response) {
                         if(response.code() == 200) {
                             if (response.body().getIsError().equals("N")) {
-                                //Utils.setFragment(context, new CartDetailsFragment(), true);
+                                Utils.setFragment(context, new CartDetailsFragment(), true);
                             } else {
                                 Toast.makeText(context, "Please give correct credentials!", Toast.LENGTH_SHORT).show();
                             }

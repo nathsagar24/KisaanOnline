@@ -21,10 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kisaanonline.ApiResults.CheckoutResult;
+import com.example.kisaanonline.Models.CheckoutCredentials;
 import com.example.kisaanonline.Models.UserCredentials;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Utils;
@@ -37,11 +39,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,22 +58,28 @@ public class PaymentDetails extends Fragment {
     private static final int SCREENSHOT_PICKER = 1;
     private TextView screenshotFileName;
     private Button screenshotUploadBtn;
-    private File paymentPicFile, userInfoFile;
+    private File paymentPicFile, checkoutDetailsFile;
+    private RadioGroup paymentMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_payment_details, container, false);
+        paymentMode = v.findViewById(R.id.payment_mode);
 
-        //Getting Billing Details
+        //Getting checkout details
+        String checkoutDetailsJsonString = createCheckoutDetailsJsonString();
+        Log.v("CHECKOUT DETAILS", "" + checkoutDetailsJsonString);
+
+        /*//Getting Billing Details
         Bundle bundle = getArguments();
         UserCredentials userCredentials = bundle.getParcelable("userInfo");
         Gson gson =new Gson();
-        String userInfoJsonString = gson.toJson(userCredentials);
+        String userInfoJsonString = gson.toJson(userCredentials);*/
 
         //Get User Info Json File
         File path = getActivity().getExternalFilesDir(null);
-        userInfoFile = getUserInfoFile(userInfoJsonString, path);
+        checkoutDetailsFile = getCheckoutDetailsFile(checkoutDetailsJsonString, path);
 
 
         //Setting Up Billing Details Btn
@@ -103,9 +114,9 @@ public class PaymentDetails extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        RequestBody userInfoRequestBody = RequestBody.create(userInfoFile,MediaType.parse("*/*"));
-                        MultipartBody.Part userInfoFilePart = MultipartBody.Part.createFormData("json", userInfoFile.getName(), userInfoRequestBody);
-                        RequestBody paymentPicRequestBody = RequestBody.create(paymentPicFile,MediaType.parse("*/*"));
+                        RequestBody userInfoRequestBody = RequestBody.create(checkoutDetailsFile,MediaType.parse("application/json"));
+                        MultipartBody.Part userInfoFilePart = MultipartBody.Part.createFormData("json", checkoutDetailsFile.getName(), userInfoRequestBody);
+                        RequestBody paymentPicRequestBody = RequestBody.create(paymentPicFile,MediaType.parse("image/png"));
                         MultipartBody.Part paymentPicFilePart = MultipartBody.Part.createFormData("file", paymentPicFile.getName(), paymentPicRequestBody);
 
                         uploadPaymentDetails(userInfoFilePart, paymentPicFilePart, Utils.token);
@@ -119,24 +130,50 @@ public class PaymentDetails extends Fragment {
         return v;
     }
 
+    private String createCheckoutDetailsJsonString() {
+
+        CheckoutCredentials checkoutCredentials = new CheckoutCredentials();
+        checkoutCredentials.setSubAmount((int) Utils.checkoutCartDetails.getTotal().getSubTotal());
+        checkoutCredentials.setTaxAmount((int) Utils.checkoutCartDetails.getTotal().getTotalGstAmt());
+        checkoutCredentials.setPaymentAmount((int) Utils.checkoutCartDetails.getTotal().getNetTotal());
+        if(paymentMode.getCheckedRadioButtonId() == R.id.paytm_btn)
+        checkoutCredentials.setPaymentMode("Paytm");
+        else if(paymentMode.getCheckedRadioButtonId() == R.id.phonepe_btn)
+        checkoutCredentials.setPaymentMode("PhonePe");
+        else if(paymentMode.getCheckedRadioButtonId() == R.id.googlepay_btn)
+        checkoutCredentials.setPaymentMode("GooglePay");
+        else checkoutCredentials.setPaymentMode("Not selected");
+        List<CheckoutCredentials.OrderDetails> orderDetailsList = new ArrayList<>();
+        for(int i=0;i < Utils.checkoutCartDetails.getDataList().size();i++){
+            CheckoutCredentials.OrderDetails orderDetails = checkoutCredentials.new OrderDetails(Utils.checkoutCartDetails.getDataList().get(i).getVariantId()
+            , Utils.checkoutCartDetails.getDataList().get(i).getProductId(), Utils.checkoutCartDetails.getDataList().get(i).getQty());
+            orderDetailsList.add(orderDetails);
+        }
+        checkoutCredentials.setOrderList(orderDetailsList);
+        Gson gson = new Gson();
+        return gson.toJson(checkoutCredentials);
+    }
+
+    //When stock not available or some other error that gives proper checkout result error code should be 200
     private void uploadPaymentDetails(MultipartBody.Part userInfoFilePart, MultipartBody.Part paymentPicFilePart, String token) {
         Call<CheckoutResult> callPayment = Utils.getAPIInstance().uploadPaymentDetails("Bearer " + token, Utils.userId, userInfoFilePart, paymentPicFilePart);
         callPayment.enqueue(
                 new Callback<CheckoutResult>() {
                     @Override
                     public void onResponse(Call<CheckoutResult> call, Response<CheckoutResult> response) {
+                        Log.v("RESPONSE : ","" + response.code());
                         if(response.code() == 200) {
-                            if(response.body().getIserror().equals("N")) {
-                                Toast.makeText(getActivity(), "Upload Successful", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                Toast.makeText(getActivity(), "Please give correct credentials! : " + response.body().getFail(), Toast.LENGTH_SHORT).show();
-                            }
+                            Log.v("RES ","" + response);
+                            Toast.makeText(getActivity(), "Upload Successful", Toast.LENGTH_SHORT).show();
                         }
-                        else if (response.code() == 401 || response.code() == 500){
+                        else if (response.code() == 500){
+                            Log.v("UPLOAD FAILED : ","Please give correct credentials! " + response.code() );
+                        }
+                        else if (response.code() == 401){
                             Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
                                 @Override
                                 public void onTokenReceived() {
+                                    Log.v("UPLOAD FAILED : ","Token Invalid : " + response.code() );
                                     uploadPaymentDetails(userInfoFilePart, paymentPicFilePart, Utils.token);
                                 }
                             });
@@ -154,28 +191,20 @@ public class PaymentDetails extends Fragment {
         );
     }
 
-    private File getUserInfoFile(String userInfoJsonString, File path) {
-        File userInfoFile = new File(path, "userInfo.json");
+    private File getCheckoutDetailsFile(String checkoutDetailsString, File path) {
+        File checkoutDetailsFile = new File(path, "userInfo.json");
         try {
-            FileOutputStream stream = new FileOutputStream(userInfoFile);
-            stream.write(userInfoJsonString.getBytes());
+            FileOutputStream stream = new FileOutputStream(checkoutDetailsFile);
+            stream.write(checkoutDetailsString.getBytes());
             stream.close();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getActivity(),"Exception : " + e, Toast.LENGTH_SHORT).show();
         }
         finally {
-            return userInfoFile;
+            return checkoutDetailsFile;
         }
     }
-
-   /* private void writeToFile(String userInfoJsonString) throws IOException {
-
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getActivity().openFileOutput("userInfo.txt", Context.MODE_PRIVATE));
-        outputStreamWriter.write(userInfoJsonString);
-        outputStreamWriter.close();
-
-    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -183,11 +212,7 @@ public class PaymentDetails extends Fragment {
         if (requestCode == SCREENSHOT_PICKER && resultCode == Activity.RESULT_OK) {
             Uri paymentPicUri = data.getData();
            getPaymentPicFile(paymentPicUri);
-           /* Toast.makeText(getActivity(), "" + uri.getPath(), Toast.LENGTH_SHORT).show();
-            String mimeType = getContext().getContentResolver().getType(uri);
-            mimeType = mimeType.substring(mimeType.lastIndexOf('/')+1, mimeType.length());
-            screenshotFileName.setText(uri.getPath().substring(uri.getPath().lastIndexOf('/')+1,uri.getPath().length()-1) + "." + mimeType);*/
-
+            screenshotFileName.setText(paymentPicFile.getName());
         }
     }
 

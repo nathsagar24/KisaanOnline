@@ -71,15 +71,7 @@ public class LoginFragment extends Fragment {
     private void loginBtnClicked() {
 
         if(isValidInput(username.getText().toString(), password.getText().toString())){
-            //Utils.refreshToken(getActivity());
-            /*Utils.refreshToken(getActivity(), new Utils.TokenReceivedListener() {
-                @Override
-                public void onTokenReceived() {
-                    checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
-                }
-            });*/
             checkLoginCredentials(username.getText().toString(), password.getText().toString(), Utils.token);
-            //checkLoginCredentials1(username.getText().toString(), password.getText().toString());
         }
         else{
             Toast.makeText(getActivity(), "Please Input proper Credentials!!", Toast.LENGTH_SHORT).show();
@@ -136,6 +128,7 @@ public class LoginFragment extends Fragment {
         Utils.loggedIn = loginState;
         if(Utils.loggedIn){
             Utils.userId = userId;
+            Utils.setPrefs("userId", Utils.userId, getActivity());
             Utils.setFragment(getActivity(), new HomeFragment(), true);
         }
     }
