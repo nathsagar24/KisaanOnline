@@ -1,5 +1,6 @@
 package com.example.kisaanonline.Adapters;
 
+import android.animation.LayoutTransition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         @Override
         public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.product_layout, parent, false);
+            ((ViewGroup)v.findViewById(R.id.product_img_root)).getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
             return new ProductViewHolder(v);
         }
 

@@ -1,6 +1,9 @@
 package com.example.kisaanonline;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.LayoutTransition;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +33,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -60,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Utils.toolbar = toolbar;
+
+        ((ViewGroup)findViewById(R.id.root)).getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
         if(Utils.getPrefs("userId", this) != null){
             Utils.userId = Utils.getPrefs("userId", this);
@@ -280,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Logout Button Clicked", Toast.LENGTH_SHORT).show();
             Utils.loggedIn = false;
             Utils.userId = null;
+            Utils.setPrefs("userId", null, this);
             Utils.toolbar.getMenu().findItem(R.id.action_logout).setVisible(false);
             Utils.toolbar.getMenu().findItem(R.id.action_cart).setVisible(false);
             Utils.toolbar.getMenu().findItem(R.id.action_hamburger).setVisible(true);
@@ -287,7 +295,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Utils.setFragment(this,new HomeFragment(),false);
         }
         else if(id == R.id.action_hamburger){
-            if(hamburgerMenuItem.isChecked()) Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
+            if(hamburgerMenuItem.isChecked()) {
+                /*displayOptionsLayout.animate()
+                                    .translationY(0)
+                                    .alpha(0.0f)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            displayOptionsLayout.setVisibility(View.GONE);
+
+                                        }
+                                    });*/
+
+                /*TranslateAnimation animate = new TranslateAnimation(
+                        0,                 // fromXDelta
+                        0,                 // toXDelta
+                        0,                 // fromYDelta
+                        0); // toYDelta
+                animate.setDuration(500);
+                animate.setFillAfter(true);
+                displayOptionsLayout.startAnimation(animate);*/
+
+
+                Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.GONE);
+            }
             else Utils.DISPLAY_OPTIONS_VISIBILITY.setValue(View.VISIBLE);
         }
         return super.onOptionsItemSelected(item);
