@@ -16,9 +16,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="our_products"><u>Our Products</u></string>
-    <string name="search"><u>Search</u></string>
-    <string name="filter_by_price"><u>Filter By Price</u></string>
+    <string name="our_products">Our Products</string>
+    <string name="search">Search</string>
+    <string name="filter_by_price">Filter By Price</string>
     <string name="login"><u>Login</u></string>
     <string name="cart_details"><u>Cart details</u></string>
     <string name="billing_details"><u>Billing Details</u></string>

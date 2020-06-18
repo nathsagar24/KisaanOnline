@@ -1,6 +1,8 @@
 package com.example.kisaanonline.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,12 @@ import com.example.kisaanonline.Adapters.ProductListAdapter;
 import com.example.kisaanonline.R;
 import com.example.kisaanonline.Models.SearchCredentials;
 import com.example.kisaanonline.Utils;
+import com.google.android.material.resources.MaterialResources;
+import com.google.android.material.slider.RangeSlider;
+import com.google.android.material.slider.Slider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.internal.Util;
 import retrofit2.Call;
@@ -46,17 +55,39 @@ public class HomeFragment extends Fragment {
     private RecyclerView.LayoutManager productListLayoutManager;
     private SearchView searchView;
     private RecyclerView.Adapter productListAdapter;
+    private Button filterByPriceBtn, resetBtn;
+/*    private RangeSlider slider;*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home,container,false);
-        //setHasOptionsMenu(true);
+
+
+
+/*        slider = v.findViewById(R.id.slider);
+        slider.setValues(0.0f, 100000.0f);
+        slider.setTrackActiveTintList(MaterialResources.getColorStateList());*/
+
+
+
         //Setting Up Product List
         productListRecyclerView = v.findViewById(R.id.products_recycler_view);
         productListLayoutManager = new LinearLayoutManager(getActivity());
         productListRecyclerView.setLayoutManager(productListLayoutManager);
         getProductList(Utils.token);
+
+        //Setting up reset button
+        resetBtn = v.findViewById(R.id.reset_btn);
+        resetBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        searchView.setQuery("", false);
+                        getProductList(Utils.token);
+                    }
+                }
+        );
 
         //Setting Up Search
         searchView = v.findViewById(R.id.search_bar);
@@ -72,7 +103,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public boolean onQueryTextChange(String searchKeyword) {
-                        getSearchedProducts(searchKeyword, Utils.token);
+                       // getSearchedProducts(searchKeyword, Utils.token);
                         return true;
                     }
                 }
@@ -90,8 +121,20 @@ public class HomeFragment extends Fragment {
         //Setting Up Price Seekbar
         priceRange = v.findViewById(R.id.price_range);
         priceSeekBar = v.findViewById(R.id.price_seekbar);
-        setMaxprice(Utils.token);
+        //setMaxprice(Utils.token);
         setPriceSeekbarListener();
+
+        //Setting Filter Button
+        filterByPriceBtn = v.findViewById(R.id.filter_price_range_btn);
+        filterByPriceBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                            //Filter Items based on price
+                    }
+                }
+        );
+
         return v;
     }
 
@@ -129,6 +172,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<MaxPriceResult> call, Throwable t) {
                 //Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if(!Utils.isNetworkConnected(getActivity())) {
+                    Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                }
+                setMaxprice(Utils.token);
             }
         });
     }
@@ -173,6 +220,10 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onFailure(Call<ProductListResult> call, Throwable t) {
                         Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if(!Utils.isNetworkConnected(getActivity())) {
+                            Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        getSearchedProducts(searchKeyword, Utils.token);
                     }
                 }
         );
@@ -191,7 +242,7 @@ public class HomeFragment extends Fragment {
                                 setProductListAdapter(response.body());
                             }
                             else{
-                                Toast.makeText(getActivity(), "Please give correct credentials!", Toast.LENGTH_SHORT).show();
+                               // Toast.makeText(getActivity(), "Please give correct credentials!", Toast.LENGTH_SHORT).show();
                             }
                         }
                         else if (response.code() == 401 || response.code() == 500){
@@ -210,6 +261,10 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onFailure(Call<ProductListResult> call, Throwable t) {
                         Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if(!Utils.isNetworkConnected(getActivity())) {
+                            Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        getProductList(Utils.token);
                     }
                 }
         );
@@ -219,12 +274,12 @@ public class HomeFragment extends Fragment {
         productListAdapter = new ProductListAdapter(getActivity(), productList);
         productListRecyclerView.setAdapter( productListAdapter );
         productListAdapter.notifyDataSetChanged();
-        (new Handler()).postDelayed(new Runnable() {
+       /* (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 getProductList(Utils.token);
             }
-        }, 3000);
+        }, 3000);*/
     }
 
 }

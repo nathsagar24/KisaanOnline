@@ -172,7 +172,10 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void onFailure(Call<RegisterResult> call, Throwable t) {
                         Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                       // isRegistered(false);
+                        if(!Utils.isNetworkConnected(getActivity())) {
+                            Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        register(Utils.token);
                     }
                 }
         );

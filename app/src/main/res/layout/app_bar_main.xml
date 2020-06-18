@@ -14,6 +14,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:logo="@mipmap/kisaanonlineicon"
+
         />
 
     <com.google.android.material.appbar.AppBarLayout
@@ -41,6 +42,14 @@
                     android:text="Home"
                     android:paddingTop="15dp"
                     />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorLightGray"
+                    android:layout_marginTop="5dp"
+                    />
+
                 <TextView
                     android:id="@+id/about_option"
                     android:layout_width="wrap_content"
@@ -48,6 +57,15 @@
                     android:textColor="@color/colorBlack"
                     android:paddingTop="15dp"
                     android:text="About Us"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorLightGray"
+                    android:layout_marginTop="5dp"
+                    />
+
                 <TextView
                     android:id="@+id/contact_option"
                     android:layout_width="wrap_content"

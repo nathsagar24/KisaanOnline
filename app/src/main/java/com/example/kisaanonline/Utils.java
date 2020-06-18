@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.session.MediaSession;
+import android.net.ConnectivityManager;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -239,6 +240,11 @@ public class Utils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key,value );
         editor.commit();
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetwork()!=null;
     }
 
 

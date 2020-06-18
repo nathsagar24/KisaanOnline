@@ -180,6 +180,10 @@ public class PaymentDetails extends Fragment {
                     @Override
                     public void onFailure(Call<CheckoutResult> call, Throwable t) {
                         Log.v("UPLOAD FAILED : ","" + t );
+                        if(!Utils.isNetworkConnected(getActivity())) {
+                            Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        uploadPaymentDetails(userInfoFilePart, paymentPicFilePart, Utils.token);
                     }
                 }
         );

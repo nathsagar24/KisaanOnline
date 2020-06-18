@@ -144,6 +144,10 @@ public class BillingDetailsFragment extends Fragment {
                     @Override
                     public void onFailure(Call<UserDetailResult> call, Throwable t) {
                         Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if(!Utils.isNetworkConnected(getActivity())) {
+                            Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        setBillingDetails(Utils.token, Utils.userId);
                     }
                 }
         );

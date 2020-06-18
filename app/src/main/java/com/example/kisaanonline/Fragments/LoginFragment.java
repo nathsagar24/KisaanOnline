@@ -118,6 +118,10 @@ public class LoginFragment extends Fragment {
                     public void onFailure(Call<LoginResult> call, Throwable t) {
                         setLoginState(null,false);
                         Toast.makeText(getActivity(), "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if(!Utils.isNetworkConnected(getActivity())) {
+                            Toast.makeText(getActivity(), "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        checkLoginCredentials(user, pass, Utils.token);
                     }
                 }
         );

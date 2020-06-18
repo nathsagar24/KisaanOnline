@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.kisaanonline.ApiResults.CartListResult;
 import com.example.kisaanonline.ApiResults.RemoveFromCartResult;
 import com.example.kisaanonline.R;
@@ -59,6 +60,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
             Glide
                     .with(context)
                     .load(cartListResult.getCartList().get(position).getImageUrl())
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.mipmap.image_loading)
                     .into(holder.productImage);
         holder.removeBtn.setOnClickListener(
@@ -107,6 +109,10 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.CartPr
                     @Override
                     public void onFailure(Call<RemoveFromCartResult> call, Throwable t) {
                         Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if(!Utils.isNetworkConnected(context)) {
+                            Toast.makeText(context, "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        removeFromCart(cartId, Utils.token, Utils.userId);
                     }
                 }
         );

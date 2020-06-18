@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.kisaanonline.ApiResults.APITokenResult;
 import com.example.kisaanonline.ApiResults.CartSaveResult;
@@ -69,6 +70,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             Glide
                     .with(context)
                     .load(productListResult.getData().get(position).getImageUrl())
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.mipmap.image_loading)
                     .into(holder.productImage);
             holder.productImage.setOnClickListener(
@@ -130,6 +132,10 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     @Override
                     public void onFailure(Call<CartSaveResult> call, Throwable t) {
                         Toast.makeText(context, "API Call Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if(!Utils.isNetworkConnected(context)) {
+                            Toast.makeText(context, "Please check your internet connection!!", Toast.LENGTH_SHORT).show();
+                        }
+                        addNewProductToCart(productId, variantId, qty, Utils.token);
                     }
                 }
         );
