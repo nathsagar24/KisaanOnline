@@ -167,6 +167,28 @@
                 />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                >
+            <Button
+                android:id="@+id/pay_directly_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="Pay Directly"
+                android:background="@drawable/rectangular_green_btn"
+                android:padding="5dp"
+                android:textColor="@color/colorPrimary"
+                />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
             <Button
                 android:id="@+id/upload_screenshot_btn"
                 android:layout_width="wrap_content"
@@ -175,9 +197,9 @@
                 android:text="Proceed To Checkout"
                 android:background="@drawable/rectangular_green_btn"
                 android:padding="5dp"
-                android:layout_marginTop="15dp"
                 android:textColor="@color/colorPrimary"
                 />
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

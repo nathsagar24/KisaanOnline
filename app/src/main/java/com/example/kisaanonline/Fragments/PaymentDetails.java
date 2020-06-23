@@ -57,7 +57,7 @@ public class PaymentDetails extends Fragment {
     private Button screenshotChooserBtn;
     private static final int SCREENSHOT_PICKER = 1;
     private TextView screenshotFileName;
-    private Button screenshotUploadBtn;
+    private Button screenshotUploadBtn, payOnlineBtn;
     private File paymentPicFile, checkoutDetailsFile;
     private RadioGroup paymentMode;
 
@@ -120,6 +120,18 @@ public class PaymentDetails extends Fragment {
                     }
                 }
         );
+
+        //Setting Up Pay Online
+        payOnlineBtn = v.findViewById(R.id.pay_directly_btn);
+        payOnlineBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Utils.setFragment(getActivity(), new PayOnlineFragment(), true);
+                    }
+                }
+        );
+
 
         return v;
     }

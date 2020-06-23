@@ -76,7 +76,8 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
         holder.gstPercent.setText("" + cartDetailsResult.getDataList().get(position).getGstPercent() + " %");
         holder.gstAmt.setText("Rs. " + cartDetailsResult.getDataList().get(position).getGstAmt());
         //holder.qtyPicker.setMaxValue((int) cartDetailsResult.getDataList().get(position).getAvailableQty());
-        holder.qtyPicker.setMinValue(Math.min(1, (int) cartDetailsResult.getDataList().get(position).getAvailableQty()));
+        holder.qtyPicker.setMinValue(1);
+        holder.qtyPicker.setMaxValue(100);
         holder.qtyPicker.setValue(cartDetailsResult.getDataList().get(position).getQty());
         holder.deleteBtn.setOnClickListener(
                 new View.OnClickListener() {
@@ -97,6 +98,16 @@ public class CartDetailsAdapter extends RecyclerView.Adapter<CartDetailsAdapter.
                     @Override
                     public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
                         Utils.checkoutCartDetails.getDataList().get(position).setQty(newVal);
+                        Utils.checkoutCartDetails.getDataList().get(position)
+                                .setTotal(newVal * Utils.checkoutCartDetails.getDataList().get(position).getPrice());
+                        Utils.checkoutCartDetails.getTotal()
+                                .setSubTotal(Utils.checkoutCartDetails.getTotal().getSubTotal()
+                                        + (newVal - oldVal) * Utils.checkoutCartDetails.getDataList().get(position).getPrice());
+                        Utils.checkoutCartDetails.getTotal()
+                                .setTotalGstAmt(Utils.checkoutCartDetails.getTotal().getTotalGstAmt()
+                                        + (newVal - oldVal) * Utils.checkoutCartDetails.getDataList().get(position).getGstAmt());
+                        Utils.checkoutCartDetails.getTotal()
+                                .setNetTotal(Utils.checkoutCartDetails.getTotal().getSubTotal() + Utils.checkoutCartDetails.getTotal().getTotalGstAmt());
                     }
                 }
         );

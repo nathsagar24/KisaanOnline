@@ -26,6 +26,8 @@ import com.facebook.stetho.Stetho;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         Utils.toolbar = toolbar;
+
 
         ((ViewGroup)findViewById(R.id.root)).getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
@@ -341,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(Call<CartListResult> call, Response<CartListResult> response) {
                         if(response.code() == 200) {
                             setCartListAdapter(response.body());
-                            cartTotalPrice.setText("" + response.body().getTotalPrice());
+                            cartTotalPrice.setText("Rs. " + response.body().getTotalPrice());
                         }
                         else if (response.code() == 401){
                             Utils.refreshToken(MainActivity.this, new Utils.TokenReceivedListener() {

@@ -28,7 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
-            android:textSize="10dp"
+            android:textSize="15dp"
+            android:layout_marginRight="15dp"
             android:text="Product Name X Quantity"/>
 
         <ImageView
@@ -44,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
+            android:textColor="@color/colorBlack"
             android:text="Cart Product Price"/>
     </LinearLayout>
 
